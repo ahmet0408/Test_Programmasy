@@ -1,0 +1,56 @@
+﻿@model TestProgrammasy.DTOs.LoginDTO
+@{
+    ViewData["Title"] = "Giriş";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Ulgama Giriş</h2>
+
+                <form method="post" asp-action="Login" asp-controller="Account">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="UserName">UserName</label>
+                        <input asp-for="UserName" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password">Parol</label>
+                        <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input asp-for="RememberMe" type="checkbox" class="custom-control-input" id="rememberMe">
+                            <label class="custom-control-label" for="rememberMe">Meni ýatda sakla</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Giriş</button>
+                    </div>
+
+                    <div class="text-center">
+                        <a asp-action="ForgotPassword">Parolyňyzy unutdyňyzmy?</a>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <p class="mb-0">Hasabyňyz ýokmy?</p>
+                        <a asp-action="Register" class="btn btn-link">Täze hasap döret</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

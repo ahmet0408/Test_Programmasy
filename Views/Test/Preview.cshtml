@@ -1,0 +1,182 @@
+﻿@model TestProgrammasy.DTOs.TestPreviewDTO
+
+<div class="preview-container">
+    <div class="test-header">
+        <h2>@Model.Name</h2>
+        <div class="test-info">
+            <div class="info-item">
+                <i class="fas fa-book"></i>
+                <span>Dersi: @Model.Description</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Sorag sany: @Model.TotalQuestions</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-star"></i>
+                <span>Jemi ball: @Model.TotalPoints</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h4>Test düzgünleri:</h4>
+        <ul>
+            <li>Her soragda diňe bir jogap dogry</li>
+            <li>Test başlanandan soň wagtы durduryp bolmaýar</li>
+            <li>Testi tamamlamazdan öň ähli soraglara jogap bermeli</li>
+        </ul>
+    </div>
+
+    <div class="questions-preview">
+        <h4>Soraglar:</h4>
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            <div class="question-preview">
+                <div class="question-header">
+                    <span class="question-number">Sorag @(i + 1)</span>
+                    <span class="question-points">@Model.Questions[i].Points ball</span>
+                </div>
+                <div class="question-text">
+                    @Model.Questions[i].QuestionText
+                </div>
+                <div class="answers-preview">
+                    @foreach (var answer in Model.Questions[i].Answers)
+                    {
+                        <div class="answer-option">
+                            <i class="far fa-circle"></i>
+                            <span>@answer</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="preview-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">
+            <i class="fas fa-edit"></i> Üýtget
+        </a>
+        <a asp-action="StartTest" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-play"></i> Teste başla
+        </a>
+    </div>
+</div>
+<style>
+    .preview-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .test-header {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .test-info {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .info-item i {
+            color: var(--primary-color);
+        }
+
+    .instructions {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+    .question-preview {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .question-number {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .question-points {
+        background: var(--secondary-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+
+    .question-text {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+
+    .answers-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .answer-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+        .answer-option:hover {
+            background: #f8f9fa;
+        }
+
+    .preview-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 30px;
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+    }
+
+        .btn i {
+            font-size: 1.1em;
+        }
+</style>

@@ -1,0 +1,315 @@
+﻿@model TestProgrammasy.DTOs.TestDTO
+
+<div class="test-container">
+    <div class="test-header">
+        <div class="test-info">
+            <h2>@Model.Name</h2>
+            <p>@Model.Description</p>
+        </div>
+        <div class="timer">
+            Galan wagt: <span id="timeRemaining">@Model.TimeLimit:00</span>
+        </div>
+    </div>
+
+    <form id="testForm" asp-action="SubmitTest" method="post">
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <div class="questions-navigation">
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                <button type="button" class="question-nav-btn" data-question="@i">
+                    @(i + 1)
+                </button>
+            }
+        </div>
+
+        <div class="questions-container">
+            @if(Model.Questions != null && Model.Questions.Any())
+    {
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var question = Model.Questions[i];
+                <div class="question-slide" data-question="@i" style="display: @(i == 0 ? "block" : "none")">
+                    <div class="question-header">
+                        <h4>Sorag @(i + 1)</h4>
+                        <span class="points">@question.Points ball</span>
+                    </div>
+
+                    <div class="question-text">
+                        @question.QuestionText
+                    </div>
+
+                    <div class="answers-container">
+                        @foreach (var answer in question.Answers)
+                        {
+                            <div class="answer-option">
+                                <input type="radio"
+                                       name="Answers[@i].SelectedAnswerId"
+                                       value="@answer.Id"
+                                       id="answer_@answer.Id" />
+                                <label for="answer_@answer.Id">
+                                    @answer.AnswerText
+                                </label>
+                            </div>
+                        }
+                        <input type="hidden" name="Answers[@i].QuestionId" value="@question.Id" />
+                    </div>
+                    </div>
+                }
+
+            } else
+            {
+                <div>Soraglar ýok</div>
+
+            }
+        </div>
+
+        <div class="test-navigation">
+            <button type="button" id="prevQuestion" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Yza
+            </button>
+            <button type="button" id="nextQuestion" class="btn btn-primary">
+                Öňe <i class="fas fa-arrow-right"></i>
+            </button>
+            <button type="submit" id="submitTest" class="btn btn-success" style="display: none;">
+                Testi tamamla
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+       
+
+        let currentQuestion = 0;
+        const totalQuestions = @Model.Questions.Count;
+        let timeRemaining = @Model.TimeLimit * 60; // sekuntda
+
+        function updateNavigation() {
+      
+
+            // Ähli soraglary barlalyň
+            const slides = document.querySelectorAll('.question-slide');
+
+            // Her soragy gizläliň
+            slides.forEach((slide, index) => {
+                if (index === currentQuestion) {
+                    slide.style.display = 'block';
+                } else {
+                    slide.style.display = 'none';
+                }
+            });
+
+            // Häzirki soragy görkez
+            const currentSlide = document.querySelector(`[data-question="${currentQuestion}"]`);
+            if (currentSlide) {
+                currentSlide.style.display = 'block';
+            }
+            // "Yza" düwmesini dolandyrmak
+            const prevButton = document.getElementById('prevQuestion');
+            if (prevButton) {
+                prevButton.style.display = currentQuestion === 0 ? 'none' : 'block';
+            }
+
+            // "Öňe" düwmesini dolandyrmak
+            const nextButton = document.getElementById('nextQuestion');
+            if (nextButton) {
+                nextButton.style.display = currentQuestion === totalQuestions - 1 ? 'none' : 'block';
+            }
+
+            // "Testi tamamla" düwmesini dolandyrmak
+            const submitButton = document.getElementById('submitTest');
+            if (submitButton) {
+                submitButton.style.display = currentQuestion === totalQuestions - 1 ? 'block' : 'none';
+            } 
+
+            // Navigation düwmeleriň statusyny täzelemek
+            document.querySelectorAll('.question-nav-btn').forEach((btn, index) => {
+                // Häzirki sorag düwmesini bellemek
+                btn.classList.remove('active');
+                if (index === currentQuestion) {
+                    btn.classList.add('active');
+                }
+
+                // Jogap berilen soraglary bellemek
+                const questionInputs = document.querySelectorAll(`[data-question="${index}"] input[type="radio"]`);
+                const isAnswered = Array.from(questionInputs).some(input => input.checked);
+
+                btn.classList.remove('answered');
+                if (isAnswered) {
+                    btn.classList.add('answered');
+                }
+            });
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timeRemaining').textContent =
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining <= 0) {
+                document.getElementById('testForm').submit();
+            }
+            timeRemaining--;
+        }
+
+        document.getElementById('prevQuestion').addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateNavigation();
+            }
+        });
+
+        document.getElementById('nextQuestion').addEventListener('click', () => {
+            if (currentQuestion < totalQuestions - 1) {
+                currentQuestion++;
+                updateNavigation();
+            }
+        });
+
+        document.querySelectorAll('.question-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentQuestion = parseInt(btn.dataset.question);
+                updateNavigation();
+            });
+        });
+
+        // Timer başlatmak
+        setInterval(updateTimer, 1000);
+
+        // Ilkinji görkeziş
+        updateNavigation();
+    </script>
+}
+<style>
+    .test-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .timer {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .questions-navigation {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .question-nav-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        background: #fff;
+        color: var(--primary-color);
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .question-nav-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .question-nav-btn.answered {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #fff;
+        }
+
+    .question-slide {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .points {
+        background: var(--secondary-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .question-text {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .answers-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .answer-option {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .answer-option:hover {
+            border-color: var(--secondary-color);
+            background: #f8f9fa;
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+
+    .test-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn i {
+            font-size: 1.2em;
+        }
+</style>

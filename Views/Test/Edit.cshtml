@@ -1,0 +1,139 @@
+﻿@model TestProgrammasy.DTOs.EditTestDTO
+
+<div class="card">
+    <div class="card-header">
+        <h3>Testi üýtgetmek</h3>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name">Test ady</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+@* 
+            <div class="form-group">
+                <label asp-for="Subject">Dersi</label>
+                <input asp-for="Subject" class="form-control" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div> *@
+
+            <div id="questions-container">
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    <div class="card question-card mb-3">
+                        <div class="card-header">
+                            <h5>Sorag @(i + 1)</h5>
+                        </div>
+                        <div class="card-body">
+                            <input type="hidden" asp-for="Questions[i].Id" />
+
+                            <div class="form-group">
+                                <label>Sorag teksti</label>
+                                <textarea asp-for="Questions[i].QuestionText" class="form-control"></textarea>
+                                <span asp-validation-for="Questions[i].QuestionText" class="text-danger"></span>
+                            </div>
+@* 
+                            <div class="form-group">
+                                <label>Ball</label>
+                                <input asp-for="Questions[i].Points" class="form-control" type="number" />
+                            </div> *@
+
+                            <div class="answers-container">
+                                @for (int j = 0; j < Model.Questions[i].Answers.Count; j++)
+                                {
+                                    <div class="card answer-card mb-2">
+                                        <div class="card-body">
+                                            <input type="hidden" asp-for="Questions[i].Answers[j].Id" />
+
+                                            <div class="form-group">
+                                                <label>Jogap</label>
+                                                <input asp-for="Questions[i].Answers[j].AnswerText" class="form-control" />
+                                                <span asp-validation-for="Questions[i].Answers[j].AnswerText" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input asp-for="Questions[i].Answers[j].IsCorrect" class="form-check-input" />
+                                                <label class="form-check-label">Dogry jogap</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="addAnswer(@i)">
+                                Jogap goş
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button type="button" class="btn btn-secondary" onclick="addQuestion()">
+                Sorag goş
+            </button>
+
+            <button type="submit" class="btn btn-primary">
+                Ýatda sakla
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function addQuestion() {
+            const questionIndex = document.querySelectorAll('.question-card').length;
+            const questionsContainer = document.getElementById('questions-container');
+
+            const questionHtml = `
+                    <div class="card question-card mb-3">
+                        <div class="card-header">
+                            <h5>Sorag ${questionIndex + 1}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Sorag teksti</label>
+                                <textarea name="Questions[${questionIndex}].QuestionText" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Ball</label>
+                                <input name="Questions[${questionIndex}].Points" class="form-control" type="number" value="1" />
+                            </div>
+                            <div class="answers-container">
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="addAnswer(${questionIndex})">
+                                Jogap goş
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+        }
+
+        function addAnswer(questionIndex) {
+            const answerContainer = document.querySelectorAll('.question-card')[questionIndex]
+                .querySelector('.answers-container');
+            const answerIndex = answerContainer.querySelectorAll('.answer-card').length;
+
+            const answerHtml = `
+                    <div class="card answer-card mb-2">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Jogap</label>
+                                <input name="Questions[${questionIndex}].Answers[${answerIndex}].AnswerText" class="form-control" />
+                            </div>
+                            <div class="form-check">
+                                <input name="Questions[${questionIndex}].Answers[${answerIndex}].IsCorrect" type="checkbox" class="form-check-input" />
+                                <label class="form-check-label">Dogry jogap</label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            answerContainer.insertAdjacentHTML('beforeend', answerHtml);
+        }
+    </script>
+}
