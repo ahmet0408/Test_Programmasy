@@ -32,7 +32,10 @@ namespace TestProgrammasy.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.UserName,
+                    UserName = model.FirstName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserType = model.UserType
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

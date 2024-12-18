@@ -36,14 +36,14 @@ namespace TestProgrammasy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateTestDTO test)
+        public async Task<IActionResult> Create([FromBody] CreateTestDTO createTestDTO)
         {
             if (ModelState.IsValid)
             {
-                await _testService.CreateTest(test);
+                await _testService.CreateTest(createTestDTO);
                 return RedirectToAction(nameof(Index));
             }
-            return View(test);
+            return View(createTestDTO);
         }
         // Testi üýtgetmek (Update)
         public async Task<IActionResult> Edit(int id)
@@ -55,97 +55,37 @@ namespace TestProgrammasy.Controllers
                 return NotFound();
             }
 
-            var viewModel = new EditTestDTO
-            {
-                Id = test.Id,
-                Name = test.Name,
-                Description = test.Description,
-                Questions = test.Questions.Select(q => new EditQuestionDTO
-                {
-                    Id = q.Id,
-                    QuestionText = q.QuestionText,
-                    //Points = q.Points,
-                    Answers = q.Answers.Select(a => new EditAnswerDTO
-                    {
-                        Id = a.Id,
-                        AnswerText = a.AnswerText,
-                        IsCorrect = a.IsCorrect
-                    }).ToList()
-                }).ToList()
-            };
-
-            return View(viewModel);
+            return View(test);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Edit(EditTestViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var test = await _context.Tests
-        //            .Include(t => t.Questions)
-        //                .ThenInclude(q => q.Answers)
-        //            .FirstOrDefaultAsync(t => t.Id == model.Id);
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditTestDTO editTestDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                await _testService.EditTest(editTestDTO);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(editTestDTO);            
+        }
 
-        //        if (test == null)
-        //        {
-        //            return NotFound();
-        //        }
 
-        //        test.Title = model.Title;
-        //        test.Subject = model.Subject;
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _testService.RemoveTest(id);
 
-        //        // Soraglary täzelemek
-        //        foreach (var questionModel in model.Questions)
-        //        {
-        //            var question = test.Questions.FirstOrDefault(q => q.Id == questionModel.Id);
-        //            if (question == null)
-        //            {
-        //                // Täze sorag
-        //                question = new Question
-        //                {
-        //                    QuestionText = questionModel.QuestionText,
-        //                    Points = questionModel.Points
-        //                };
-        //                test.Questions.Add(question);
-        //            }
-        //            else
-        //            {
-        //                // Bar bolan sораgy üýtgetmek
-        //                question.QuestionText = questionModel.QuestionText;
-        //                question.Points = questionModel.Points;
-        //            }
-
-        //            // Jogaplary täzelemek
-        //            foreach (var answerModel in questionModel.Answers)
-        //            {
-        //                var answer = question.Answers.FirstOrDefault(a => a.Id == answerModel.Id);
-        //                if (answer == null)
-        //                {
-        //                    // Täze jogap
-        //                    answer = new Answer
-        //                    {
-        //                        AnswerText = answerModel.AnswerText,
-        //                        IsCorrect = answerModel.IsCorrect
-        //                    };
-        //                    question.Answers.Add(answer);
-        //                }
-        //                else
-        //                {
-        //                    // Bar bolan jogaby üýtgetmek
-        //                    answer.AnswerText = answerModel.AnswerText;
-        //                    answer.IsCorrect = answerModel.IsCorrect;
-        //                }
-        //            }
-        //        }
-
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    return View(model);
-        //}
-
+                TempData["Success"] = "Test üstünlikli pozuldy";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Test pozulanda ýalňyşlyk ýüze çykdy";
+                return RedirectToAction(nameof(Index));
+            }
+        }
         public async Task<IActionResult> Preview(int id)
         {
             var test = await _testService.GetTestForPreviewById(id);

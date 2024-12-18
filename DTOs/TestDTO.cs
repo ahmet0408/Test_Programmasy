@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TestProgrammasy.DTOs
 {
@@ -7,6 +8,7 @@ namespace TestProgrammasy.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int TotalQuestions { get; set; }
         public int TotalPoints { get; set; }
         public int TimeLimit { get; set; }

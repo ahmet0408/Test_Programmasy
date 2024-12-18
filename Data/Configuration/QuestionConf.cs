@@ -13,7 +13,7 @@ namespace TestProgrammasy.Data.Configuration
             builder.Property(p => p.QuestionType);
             builder.Property(p => p.Order);
             builder.Property(p => p.CreatedAt);
-            builder.Property(p => p.CorrectAnswedId);
+            builder.Property(p => p.CorrectAnswerIndex);
             builder.HasMany(p => p.Answers).WithOne(p => p.Question).HasForeignKey(p => p.QuestionId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.Test).WithMany(p => p.Questions).HasForeignKey(p => p.TestId).OnDelete(DeleteBehavior.Cascade);
         }

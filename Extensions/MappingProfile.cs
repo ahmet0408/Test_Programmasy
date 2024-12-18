@@ -11,11 +11,15 @@ namespace MyLibrary.Extensions
         {
             CreateMap<CreateTestDTO, Test>();
             CreateMap<EditTestDTO, Test>().ReverseMap();
-            CreateMap<Question, QuestionDTO>().ReverseMap();
-            CreateMap<Answer, AnswerDTO>().ReverseMap();
-            CreateMap<Question, EditQuestionDTO>().ReverseMap();
-            CreateMap<Answer, EditAnswerDTO>().ReverseMap();
             CreateMap<TestDTO, Test>().ReverseMap();
+
+            CreateMap<CreateQuestionDTO, Question>();
+            CreateMap<Question, QuestionDTO>().ReverseMap();
+            CreateMap<Question, EditQuestionDTO>().ReverseMap();
+
+            CreateMap<CreateAnswerDTO, Answer>();
+            CreateMap<Answer, AnswerDTO>().ReverseMap();
+            CreateMap<Answer, EditAnswerDTO>().ReverseMap();
 
             //CreateMap<CreateAboutDTO, About>();
             //CreateMap<AboutTranslateDTO, AboutTranslate>().ReverseMap();

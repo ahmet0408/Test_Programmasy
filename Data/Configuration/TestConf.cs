@@ -11,8 +11,7 @@ namespace TestProgrammasy.Data.Configuration
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Name);
             builder.Property(p => p.Description);
-            builder.Property(p => p.StartDate);
-            builder.Property(p => p.EndDate);
+            builder.Property(p => p.UpdatetAt);
             builder.Property(p => p.CreatedAt);
             builder.Property(p => p.Level).HasConversion<string>();
             builder.HasOne(p => p.User).WithMany(p => p.Tests).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);

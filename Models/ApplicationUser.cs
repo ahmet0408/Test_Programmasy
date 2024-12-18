@@ -9,6 +9,7 @@ namespace TestProgrammasy.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string UserType { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string AvatarUrl { get; set; }
         public ICollection<Test> Tests { get; set; }

@@ -13,13 +13,13 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
 
                     <div class="form-group">
-                        <label asp-for="UserName">UserName</label>
+                        <label asp-for="UserName">Ulanyjy adyňyz!</label>
                         <input asp-for="UserName" class="form-control" autocomplete="username" />
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Password">Parol</label>
+                        <label asp-for="Password">Parolyňyz</label>
                         <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
@@ -54,3 +54,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

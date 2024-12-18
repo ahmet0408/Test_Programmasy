@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TestProgrammasy.Models;
 
 namespace TestProgrammasy.DTOs
@@ -7,9 +8,9 @@ namespace TestProgrammasy.DTOs
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public TestLevel Level { get; set; }
+        public string Level { get; set; }
+        public int TimeLimit { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public List<CreateQuestionDTO> Questions { get; set; }        
     }
 }

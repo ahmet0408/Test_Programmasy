@@ -1,82 +1,121 @@
 ﻿@model TestProgrammasy.DTOs.EditTestDTO
 
 <div class="card">
-    <div class="card-header">
-        <h3>Testi üýtgetmek</h3>
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Testi üýtgetmek</h3>
     </div>
     <div class="card-body">
         <form asp-action="Edit" method="post">
             <input type="hidden" asp-for="Id" />
 
-            <div class="form-group">
-                <label asp-for="Name">Test ady</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="form-label">Test ady</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="form-label">Giňişleýin</label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3">
+                        <label asp-for="Level" class="form-label">Derejesini saýlaň</label>
+                        <select asp-for="Level" class="custom-select">
+                            <option value=""></option>
+                            <option value="Ýeňil">Ýeňil</option>
+                            <option value="Orta">Orta</option>
+                            <option value="Agyr">Agyr</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3">
+                        <label asp-for="TimeLimit" class="form-label">Wagty(minutda)</label>
+                        <input asp-for="TimeLimit" class="form-control" />
+                        <span asp-validation-for="TimeLimit" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-@* 
-            <div class="form-group">
-                <label asp-for="Subject">Dersi</label>
-                <input asp-for="Subject" class="form-control" />
-                <span asp-validation-for="Subject" class="text-danger"></span>
-            </div> *@
-
             <div id="questions-container">
                 @for (int i = 0; i < Model.Questions.Count; i++)
                 {
-                    <div class="card question-card mb-3">
-                        <div class="card-header">
-                            <h5>Sorag @(i + 1)</h5>
-                        </div>
+                    <div class="question-block card mb-4">
                         <div class="card-body">
                             <input type="hidden" asp-for="Questions[i].Id" />
 
                             <div class="form-group">
-                                <label>Sorag teksti</label>
-                                <textarea asp-for="Questions[i].QuestionText" class="form-control"></textarea>
+                                <label>Sorag №@(i + 1)</label>
+                                <textarea asp-for="Questions[i].QuestionText" class="form-control" rows="2"></textarea>
                                 <span asp-validation-for="Questions[i].QuestionText" class="text-danger"></span>
                             </div>
-@* 
-                            <div class="form-group">
-                                <label>Ball</label>
-                                <input asp-for="Questions[i].Points" class="form-control" type="number" />
-                            </div> *@
 
                             <div class="answers-container">
                                 @for (int j = 0; j < Model.Questions[i].Answers.Count; j++)
                                 {
-                                    <div class="card answer-card mb-2">
-                                        <div class="card-body">
-                                            <input type="hidden" asp-for="Questions[i].Answers[j].Id" />
+                                    <div class="answer-row d-flex align-items-center mb-2">
+                                        <input type="hidden" asp-for="Questions[i].Answers[j].Id" />
 
-                                            <div class="form-group">
-                                                <label>Jogap</label>
-                                                <input asp-for="Questions[i].Answers[j].AnswerText" class="form-control" />
-                                                <span asp-validation-for="Questions[i].Answers[j].AnswerText" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-check">
-                                                <input asp-for="Questions[i].Answers[j].IsCorrect" class="form-check-input" />
-                                                <label class="form-check-label">Dogry jogap</label>
-                                            </div>
+                                        <div class="form-check mr-2 d-flex align-items-center">
+                                            <input type="radio"
+                                                   name="Questions[@i].CorrectAnswerIndex"
+                                                   value="@j"
+                                            @(Model.Questions[i].CorrectAnswerIndex == j ? "checked" : "")
+                                                   class="form-check-input" />
                                         </div>
+
+                                        <div class="flex-grow-1">
+                                            <input asp-for="Questions[i].Answers[j].AnswerText"
+                                                   class="form-control"
+                                                   placeholder="Jogap warianty" />
+                                            <span asp-validation-for="Questions[i].Answers[j].AnswerText"
+                                                  class="text-danger"></span>
+                                        </div>
+
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm ml-2"
+                                                onclick="removeAnswer(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 }
                             </div>
-                            <button type="button" class="btn btn-info" onclick="addAnswer(@i)">
-                                Jogap goş
-                            </button>
+
+                            <div class="mt-2">
+                                <button type="button"
+                                        class="btn btn-secondary btn-sm"
+                                        onclick="addAnswer(@i)">
+                                    Jogap goş
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="removeQuestion(this)">
+                                    Sоrаgy poz
+                                </button>
+                            </div>
                         </div>
                     </div>
                 }
             </div>
 
-            <button type="button" class="btn btn-secondary" onclick="addQuestion()">
-                Sorag goş
-            </button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="addQuestion()">
+                    Täze sorag goş
+                </button>
 
-            <button type="submit" class="btn btn-primary">
-                Ýatda sakla
-            </button>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Ýatda sakla</button>
+                    <a asp-action="Index" class="btn btn-light">Yza gaýt</a>
+                </div>
         </form>
     </div>
 </div>
@@ -84,56 +123,116 @@
 @section Scripts {
     <script>
         function addQuestion() {
-            const questionIndex = document.querySelectorAll('.question-card').length;
-            const questionsContainer = document.getElementById('questions-container');
-
+            const questionCount = document.querySelectorAll('.question-block').length;
             const questionHtml = `
-                    <div class="card question-card mb-3">
-                        <div class="card-header">
-                            <h5>Sorag ${questionIndex + 1}</h5>
+                <div class="question-block card mb-4">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Sorag №${questionCount + 1}</label>
+                            <textarea name="Questions[${questionCount}].QuestionText"
+                                    class="form-control"
+                                    rows="2"></textarea>
                         </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Sorag teksti</label>
-                                <textarea name="Questions[${questionIndex}].QuestionText" class="form-control"></textarea>
+
+                        <div class="answers-container">
+                            <div class="answer-row d-flex align-items-center mb-2">
+                                <div class="form-check mr-2 d-flex align-items-center">
+                                    <input type="radio"
+                                           name="Questions[${questionCount}].CorrectAnswerIndex"
+                                           value="0"
+                                           checked
+                                           class="form-check-input" />
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input name="Questions[${questionCount}].Answers[0].AnswerText"
+                                           class="form-control"
+                                           placeholder="Jogap warianty" />
+                                </div>
+                                <button type="button"
+                                                class="btn btn-danger btn-sm ml-2"
+                                                onclick="removeAnswer(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg
+                                        </button>
                             </div>
-                            <div class="form-group">
-                                <label>Ball</label>
-                                <input name="Questions[${questionIndex}].Points" class="form-control" type="number" value="1" />
-                            </div>
-                            <div class="answers-container">
-                            </div>
-                            <button type="button" class="btn btn-info" onclick="addAnswer(${questionIndex})">
+                        </div>
+
+                        <div class="mt-2">
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="addAnswer(${questionCount})">
                                 Jogap goş
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="removeQuestion(this)">
+                                Sоrаgy poz
                             </button>
                         </div>
                     </div>
-                `;
+                </div>`;
 
-            questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+            document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionHtml);
         }
 
         function addAnswer(questionIndex) {
-            const answerContainer = document.querySelectorAll('.question-card')[questionIndex]
-                .querySelector('.answers-container');
-            const answerIndex = answerContainer.querySelectorAll('.answer-card').length;
+            const answersContainer = document.querySelectorAll('.answers-container')[questionIndex];
+            const answerCount = answersContainer.querySelectorAll('.answer-row').length;
 
             const answerHtml = `
-                    <div class="card answer-card mb-2">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Jogap</label>
-                                <input name="Questions[${questionIndex}].Answers[${answerIndex}].AnswerText" class="form-control" />
-                            </div>
-                            <div class="form-check">
-                                <input name="Questions[${questionIndex}].Answers[${answerIndex}].IsCorrect" type="checkbox" class="form-check-input" />
-                                <label class="form-check-label">Dogry jogap</label>
-                            </div>
-                        </div>
+                <div class="answer-row d-flex align-items-center mb-2">
+                    <div class="form-check mr-2 d-flex align-items-center">
+                        <input type="radio"
+                               name="Questions[${questionIndex}].CorrectAnswerIndex"
+                               value="${answerCount}"
+                               class="form-check-input" />
                     </div>
-                `;
+                    <div class="flex-grow-1">
+                        <input name="Questions[${questionIndex}].Answers[${answerCount}].AnswerText"
+                               class="form-control"
+                               placeholder="Jogap warianty" />
+                    </div>
+                    <button type="button"
+                            class="btn btn-danger btn-sm ml-2"
+                            onclick="removeAnswer(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg
+                    </button>
+                </div>`;
 
-            answerContainer.insertAdjacentHTML('beforeend', answerHtml);
+            answersContainer.insertAdjacentHTML('beforeend', answerHtml);
+        }
+
+        function removeQuestion(button) {
+            if (confirm('Sораgy pozmak isleýärsiňizmi?')) {
+                button.closest('.question-block').remove();
+                updateQuestionNumbers();
+            }
+        }
+
+        function removeAnswer(button) {
+            if (confirm('Jogaby pozmak isleýärsiňizmi?')) {
+                const answerRow = button.closest('.answer-row');
+                const questionBlock = answerRow.closest('.question-block');
+                answerRow.remove();
+                updateAnswerIndexes(questionBlock);
+            }
+        }
+
+        function updateQuestionNumbers() {
+            document.querySelectorAll('.question-block').forEach((block, index) => {
+                block.querySelector('label').textContent = `Sorag №${index + 1}`;
+            });
+        }
+
+        function updateAnswerIndexes(questionBlock) {
+            const answers = questionBlock.querySelectorAll('.answer-row');
+            answers.forEach((answer, index) => {
+                const radio = answer.querySelector('input[type="radio"]');
+                radio.value = index;
+            });
         }
     </script>
 }

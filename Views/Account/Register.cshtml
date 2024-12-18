@@ -5,27 +5,32 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center">Hasap Döret</h2>
-                <form asp-action="Register" method="post">
-                    <div class="form-group">
-                        <label asp-for="UserName">UserName</label>
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>
-
+                <form asp-action="Register" method="post">                   
 
                     <div class="form-group">
-                        <label asp-for="Password">Parol</label>
-                        <input asp-for="Password" class="form-control" type="password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <label asp-for="FirstName">Ady</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
-@* 
+                    <div class="form-group">
+                        <label asp-for="LastName">Familiýasy</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
                     <div class="form-group">
                         <label asp-for="UserType">Ulanyjy Görnüşi</label>
                         <select asp-for="UserType" class="form-control">
                             <option value="Teacher">Mugallym</option>
                             <option value="Student">Okuwçy</option>
                         </select>
-                    </div> *@
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password">Parol</label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    
 
                     <button type="submit" class="btn btn-primary btn-block">Hasap Döret</button>
                 </form>

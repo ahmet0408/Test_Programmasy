@@ -10,7 +10,7 @@ namespace TestProgrammasy.DTOs
         [Required(ErrorMessage = "Sorag teksti hökmany")]
         public string QuestionText { get; set; }
 
-        //public int Points { get; set; } = 1;
+        public int CorrectAnswerIndex { get; set; } = 1;
 
         public List<EditAnswerDTO> Answers { get; set; } = new List<EditAnswerDTO>();
     }
