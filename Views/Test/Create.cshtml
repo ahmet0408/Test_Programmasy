@@ -70,122 +70,117 @@
 
 @section Scripts {
     <script>
-        let questionCount = 0;
-
         function addQuestion() {
-            questionCount++;
+            const questionCount = document.querySelectorAll('.question-block').length;
             const questionHtml = `
-                    <div class="card mb-3 question-card" id="question-${questionCount}">
-                    <!-- Hidden input for question index -->
-                            <input type="hidden" name="Questions.Index" value="${questionCount}" />
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Sorag ${questionCount}</h5>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${questionCount})">
-                                <i class="bi bi-trash"></i>
+                <div class="question-block card mb-4">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Sorag №${questionCount + 1}</label>
+                            <textarea name="Questions[${questionCount}].QuestionText"
+                                    class="form-control"
+                                    rows="2"></textarea>
+                        </div>
+
+                        <div class="answers-container">
+                            <div class="answer-row d-flex align-items-center mb-2">
+                                <div class="form-check mr-2 d-flex align-items-center">
+                                    <input type="radio"
+                                           name="Questions[${questionCount}].CorrectAnswerIndex"
+                                           value="0"
+                                           checked
+                                           class="form-check-input" />
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input name="Questions[${questionCount}].Answers[0].AnswerText"
+                                           class="form-control"
+                                           placeholder="Jogap warianty" />
+                                </div>
+                                <button type="button"
+                                                class="btn btn-danger btn-sm ml-2"
+                                                onclick="removeAnswer(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg
+                                        </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="addAnswer(${questionCount})">
+                                Jogap goş
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="removeQuestion(this)">
+                                Sоrаgy poz
                             </button>
                         </div>
-                        <div class="card-body">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Sorag teksti</label>
-                                <textarea name="Questions[${questionCount}].QuestionText" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="answers-container">
-                                <div class="form-group mb-2">
-                                    <label class="form-label">Jogaplar</label>
-                                    <!-- Hidden input for correct answer -->
-                                     <input type="hidden" name="Questions[${questionCount}].CorrectAnswerIndex" class="correct-answer-input" />
-                                    <div class="input-group mb-2">
-                                        <div class="input-group-text">
-                                            <input type="radio" name="Questions[${questionCount}].CorrectAnswer" onchange="updateCorrectAnswer(${questionCount}, 0)">
-                                        </div>
-                                        <input type="text" class="form-control" name="Questions[${questionCount}].Answers[0].Text" placeholder="Jogap 1">
-                                    </div>
-                                    <div class="input-group mb-2">
-                                        <div class="input-group-text">
-                                            <input type="radio" name="Questions[${questionCount}].CorrectAnswer" onchange="updateCorrectAnswer(${questionCount}, 1)">
-                                        </div>
-                                        <input type="text" class="form-control" name="Questions[${questionCount}].Answers[1].Text" placeholder="Jogap 2">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                `;
+                </div>`;
 
-            $("#questions-container").append(questionHtml);
+            document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionHtml);
         }
 
-        function removeQuestion(questionId) {
-            $(`#question-${questionId}`).remove();
+        function addAnswer(questionIndex) {
+            const answersContainer = document.querySelectorAll('.answers-container')[questionIndex];
+            const answerCount = answersContainer.querySelectorAll('.answer-row').length;
+
+            const answerHtml = `
+                <div class="answer-row d-flex align-items-center mb-2">
+                    <div class="form-check mr-2 d-flex align-items-center">
+                        <input type="radio"
+                               name="Questions[${questionIndex}].CorrectAnswerIndex"
+                               value="${answerCount}"
+                               class="form-check-input" />
+                    </div>
+                    <div class="flex-grow-1">
+                        <input name="Questions[${questionIndex}].Answers[${answerCount}].AnswerText"
+                               class="form-control"
+                               placeholder="Jogap warianty" />
+                    </div>
+                    <button type="button"
+                            class="btn btn-danger btn-sm ml-2"
+                            onclick="removeAnswer(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg
+                    </button>
+                </div>`;
+
+            answersContainer.insertAdjacentHTML('beforeend', answerHtml);
         }
 
-
-        // Dogry jogaby ýatda saklamak üçin
-        function updateCorrectAnswer(questionId, answerIndex) {
-            $(`#question-${questionId} .correct-answer-input`).val(answerIndex);
+        function removeQuestion(button) {
+            if (confirm('Sораgy pozmak isleýärsiňizmi?')) {
+                button.closest('.question-block').remove();
+                updateQuestionNumbers();
+            }
         }
 
+        function removeAnswer(button) {
+            if (confirm('Jogaby pozmak isleýärsiňizmi?')) {
+                const answerRow = button.closest('.answer-row');
+                const questionBlock = answerRow.closest('.question-block');
+                answerRow.remove();
+                updateAnswerIndexes(questionBlock);
+            }
+        }
 
-                // Form submit etmezden öň validasiýa we data formatlaşdyrmak
-        $("#testForm").on("submit", function (e) {
-            e.preventDefault();
-
-            // Form maglumatlaryny ýygnamak
-            let formData = new FormData(this);
-            let testData = {
-                Name: formData.get("Name"),
-                Description: formData.get("Description"),
-                TimeLimit: formData.get("TimeLimit"),
-                Level: formData.get("Level"),
-                Questions: []
-            };
-
-            // Her soragy ýygnamak
-            $(".question-card").each(function(index) {
-                let questionId = $(this).attr("id").split("-")[1];
-                let question = {
-                    QuestionText: formData.get(`Questions[${questionId}].QuestionText`),
-                    Answers: [],
-                    CorrectAnswerIndex: formData.get(`Questions[${questionId}].CorrectAnswerIndex`)
-                };
-
-                // Jogaplary ýygnamak
-                $(this).find('input[name*="Answers"]').each(function(answerIndex) {
-                    question.Answers.push({
-                        AnswerText: $(this).val(),
-                        IsCorrect: answerIndex == question.CorrectAnswerIndex
-                    });
-                });
-
-                testData.Questions.push(question);
+        function updateQuestionNumbers() {
+            document.querySelectorAll('.question-block').forEach((block, index) => {
+                block.querySelector('label').textContent = `Sorag №${index + 1}`;
             });
-
-            // AJAX bilen ibermek
-            $.ajax({
-                url: $(this).attr("action"),
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(testData),
-                success: function (response) {
-                    showSuccessMessage("Test üstünlikli döredildi!");
-                    setTimeout(() => window.location.href = "/Test", 1500);
-                },
-                error: function (xhr) {
-                    showErrorMessage("Ýalňyşlyk ýüze çykdy. Täzeden synanyşyň.");
-                }
-            });
-        });
-
-        function showSuccessMessage(message) {
-            $(".alert").remove();
-            const alert = `<div class="alert alert-success">${message}</div>`;
-            $("#testForm").before(alert);
         }
 
-        function showErrorMessage(message) {
-            $(".alert").remove();
-            const alert = `<div class="alert alert-danger">${message}</div>`;
-            $("#testForm").before(alert);
+        function updateAnswerIndexes(questionBlock) {
+            const answers = questionBlock.querySelectorAll('.answer-row');
+            answers.forEach((answer, index) => {
+                const radio = answer.querySelector('input[type="radio"]');
+                radio.value = index;
+            });
         }
     </script>
 }

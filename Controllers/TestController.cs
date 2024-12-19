@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TestProgrammasy.Data;
 using TestProgrammasy.DTOs;
@@ -36,7 +39,7 @@ namespace TestProgrammasy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTestDTO createTestDTO)
+        public async Task<IActionResult> Create(CreateTestDTO createTestDTO)
         {
             if (ModelState.IsValid)
             {
@@ -86,6 +89,7 @@ namespace TestProgrammasy.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
         public async Task<IActionResult> Preview(int id)
         {
             var test = await _testService.GetTestForPreviewById(id);
@@ -106,45 +110,12 @@ namespace TestProgrammasy.Controllers
                 {
                     QuestionText = q.QuestionText,
                     Points = q.Points,
-                    Answers =  q.Answers.Select(a => a.AnswerText).ToList()
+                    Answers = q.Answers.Select(a => a.AnswerText).ToList()
                 }).ToList()
             };
 
             return View(viewModel);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> StartTest(int id)
-        {
-            var test = await _testService.GetTestForPreviewById(id);
-
-            if (test == null)
-            {
-                return NotFound();
-            }           
-
-            var viewModel = new TestDTO
-            {
-                Id = test.Id,
-                Name = test.Name,
-                Description = test.Description,
-                TimeLimit = 60, // minutda
-                Questions = test.Questions.Select(q => new QuestionDTO
-                {
-                    Id = q.Id,
-                    QuestionText = q.QuestionText,
-                    Points = q.Points,
-                    Answers = q.Answers.Select(a => new AnswerDTO
-                    {
-                        Id = a.Id,
-                        AnswerText = a.AnswerText
-                    }).ToList() ?? new List<AnswerDTO>()
-                }).ToList()
-            };
-
-            return View(viewModel);
-        }
-
-        
     }
 }
