@@ -4,14 +4,14 @@
     {
         public enum Roles
         {
-            Administrator,
-            Mugallym,
-            Okuwçy
+            Admin,
+            Teacher,
+            Student
         }
 
 
         public const string default_username = "Admin";
         public const string default_password = "Password1!";
-        public const Roles default_role = Roles.Administrator;
+        public const Roles default_role = Roles.Admin;
     }
 }

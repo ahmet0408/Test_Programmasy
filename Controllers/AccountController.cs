@@ -41,6 +41,7 @@ namespace TestProgrammasy.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    if (model.UserType == "Mugallym") { await _userManager.AddToRoleAsync(user, "Teacher"); } else { await _userManager.AddToRoleAsync(user, "Student");  }
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }

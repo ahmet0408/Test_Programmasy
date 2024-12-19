@@ -11,6 +11,8 @@ namespace TestProgrammasy.Services.TestService
         Task RemoveTest(int id);
         Task<EditTestDTO> GetTestForEditById(int id);
         Task<TestDTO> GetTestForPreviewById(int id);
+        IEnumerable<TestDTO> GetTestListByUserId(string userId);
+
         List<TestDTO> GetTestList();
     }
 }

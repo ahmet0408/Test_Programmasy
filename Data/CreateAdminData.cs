@@ -24,9 +24,9 @@ namespace TestProgrammasy.Data
 
                 if (!await roleManager.Roles.AnyAsync())
                 {
-                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Administrator.ToString()));
-                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Mugallym.ToString()));
-                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Okuwçy.ToString()));
+                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Admin.ToString()));
+                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Teacher.ToString()));
+                    await roleManager.CreateAsync(new IdentityRole(Authorization.Roles.Student.ToString()));
                 }
 
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
@@ -45,9 +45,9 @@ namespace TestProgrammasy.Data
                     };
 
                     await userManager.CreateAsync(adminUser, Authorization.default_password);
-                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Administrator.ToString());
-                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Mugallym.ToString());
-                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Okuwçy.ToString());
+                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Admin.ToString());
+                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Teacher.ToString());
+                    await userManager.AddToRoleAsync(adminUser, Authorization.Roles.Student.ToString());
 
                 }                
             }

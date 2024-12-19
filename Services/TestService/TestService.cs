@@ -69,6 +69,13 @@ namespace TestProgrammasy.Services.TestService
             var result = _mapper.Map<TestDTO>(test);
             return result;
         }
+
+        public IEnumerable<TestDTO> GetTestListByUserId(string userId)
+        {
+            var testList = _dbContext.Tests.Include(p => p.Questions).ThenInclude(p => p.Answers).Where(p => p.UserId == userId);
+            var result = _mapper.Map<IEnumerable<TestDTO>>(testList);
+            return result;
+        }
         public List<TestDTO> GetTestList()
         {
             var test = _dbContext.Tests.Include(p => p.Questions).ThenInclude(p => p.Answers).ToList();

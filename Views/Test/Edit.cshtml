@@ -1,4 +1,5 @@
-﻿@model TestProgrammasy.DTOs.EditTestDTO
+﻿@using System.Security.Claims
+@model TestProgrammasy.DTOs.EditTestDTO
 
 <div class="card">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -9,6 +10,7 @@
             <input type="hidden" asp-for="Id" />
 
             <div class="row">
+                <input type="hidden" name="UserId" value=@User.FindFirstValue(ClaimTypes.NameIdentifier) />
                 <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label asp-for="Name" class="form-label">Test ady</label>
@@ -206,7 +208,7 @@
         }
 
         function removeQuestion(button) {
-            if (confirm('Sораgy pozmak isleýärsiňizmi?')) {
+            if (confirm('Sоrаgy pozmak isleýärsiňizmi?')) {
                 button.closest('.question-block').remove();
                 updateQuestionNumbers();
             }

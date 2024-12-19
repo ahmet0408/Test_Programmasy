@@ -6,7 +6,7 @@
         <div class="test-info">
             <div class="info-item">
                 <i class="fas fa-book"></i>
-                <span>Dersi: @Model.Description</span>
+                <span>Ugry: @Model.Description</span>
             </div>
             <div class="info-item">
                 <i class="fas fa-question-circle"></i>
@@ -14,7 +14,7 @@
             </div>
             <div class="info-item">
                 <i class="fas fa-star"></i>
-                <span>Jemi ball: @Model.TotalPoints</span>
+                <span>Jemi ball: @Model.Questions.Count</span>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
         <h4>Test düzgünleri:</h4>
         <ul>
             <li>Her soragda diňe bir jogap dogry</li>
-            <li>Test başlanandan soň wagtы durduryp bolmaýar</li>
+            <li>Test başlanandan soň wagty duruzyp bolmaýar</li>
             <li>Testi tamamlamazdan öň ähli soraglara jogap bermeli</li>
         </ul>
     </div>
@@ -35,7 +35,7 @@
             <div class="question-preview">
                 <div class="question-header">
                     <span class="question-number">Sorag @(i + 1)</span>
-                    <span class="question-points">@Model.Questions[i].Points ball</span>
+                    <span class="question-points">1 ball</span>
                 </div>
                 <div class="question-text">
                     @Model.Questions[i].QuestionText

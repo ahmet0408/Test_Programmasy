@@ -7,6 +7,7 @@ namespace TestProgrammasy.DTOs
     public class CreateTestDTO
     {
         public string Name { get; set; }
+        public string UserId { get; set; }
         public string Description { get; set; }
         public string Level { get; set; }
         public int TimeLimit { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TestProgrammasy.Data;
@@ -32,6 +33,16 @@ namespace TestProgrammasy.Controllers
             return View(tests);
         }
 
+        public IActionResult TestByUser(string userId)
+        {
+            var test = _testService.GetTestListByUserId(userId);
+            if (test == null)
+            {
+                return NotFound();
+            }
+            return View("Index", test);
+        }
+
         // Täze test döretmek (Create)
         public IActionResult Create()
         {
@@ -44,7 +55,7 @@ namespace TestProgrammasy.Controllers
             if (ModelState.IsValid)
             {
                 await _testService.CreateTest(createTestDTO);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("TestByUser", "Test", new { userId = @User.FindFirstValue(ClaimTypes.NameIdentifier) });
             }
             return View(createTestDTO);
         }
@@ -67,7 +78,7 @@ namespace TestProgrammasy.Controllers
             if (ModelState.IsValid)
             {
                 await _testService.EditTest(editTestDTO);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("TestByUser", "Test", new { userId = @User.FindFirstValue(ClaimTypes.NameIdentifier) });
             }
             return View(editTestDTO);            
         }
@@ -81,15 +92,16 @@ namespace TestProgrammasy.Controllers
                 await _testService.RemoveTest(id);
 
                 TempData["Success"] = "Test üstünlikli pozuldy";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("TestByUser", "Test", new { userId = @User.FindFirstValue(ClaimTypes.NameIdentifier) });
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Test pozulanda ýalňyşlyk ýüze çykdy";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("TestByUser", "Test", new { userId = @User.FindFirstValue(ClaimTypes.NameIdentifier) });
             }
         }
 
+        
         public async Task<IActionResult> Preview(int id)
         {
             var test = await _testService.GetTestForPreviewById(id);

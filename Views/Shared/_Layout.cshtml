@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -9,48 +10,48 @@
     <style>
         /* Custom styling */
         .navbar {
-            background-color: #f8f9fa;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
         }
 
         .navbar-brand {
-            font-weight: bold;
-            color: #007bff !important;
+        font-weight: bold;
+        color: #007bff !important;
         }
 
         .nav-link {
-            font-weight: 500;
+        font-weight: 500;
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+        background-color: #007bff;
+        border-color: #007bff;
         }
 
-            .btn-primary:hover {
-                background-color: #0056b3;
-                border-color: #0056b3;
-            }
+        .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        }
 
         .card {
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
-            transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        transition: all 0.3s ease;
         }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 8px rgba(0,0,0,.2);
-            }
+        .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.2);
+        }
 
         .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
         }
 
         .footer {
-            background-color: #f8f9fa;
-            padding: 1rem 0;
+        background-color: #f8f9fa;
+        padding: 1rem 0;
         }
     </style>
 </head>
@@ -60,7 +61,7 @@
         var tokens = Antiforgery.GetAndStoreTokens(Context);
     }
     <input type="hidden" name="__RequestVerificationToken"
-           value="@tokens.RequestToken" />
+    value="@tokens.RequestToken" />
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -71,16 +72,29 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş Sahypa</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş sahypa</a>
                         </li>
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Test" asp-action="TestByUser" asp-route-userId=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Testlerim</a>
+                            </li>
+                        }
+
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Test" asp-action="Create">Täze_Test_Goşmak</a>
+                        </li>  *@
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="UserRoles" asp-action="Index">Ulanyjylar</a>
+                            </li>
+                        }                        
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Test" asp-action="Create">Täze Test</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Test" asp-action="Report">Hasabatlar</a>
+                            <a class="nav-link text-dark" asp-controller="Test" asp-action="TestResult">Netijeler</a>
                         </li>                        
                     </ul>
                     <partial name="_LoginPartial" />
