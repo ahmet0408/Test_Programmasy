@@ -9,11 +9,9 @@ namespace TestProgrammasy.DTOs
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Level { get; set; }
         public string UserId { get; set; }
-        public int TotalQuestions { get; set; }
         public QuestionDTO CurrentQuestion { get; set; }
-        public int CurrentQuestionNumber { get; set; }
-        public int TotalPoints { get; set; }
         public int TimeLimit { get; set; }
         public List<QuestionDTO> Questions { get; set; }
 

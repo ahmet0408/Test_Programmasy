@@ -14,7 +14,7 @@
 
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        @if (!isAdmin)
+        @if (isTeacher && !isAdmin)
             {
             <h3 class="mb-0">
                 Testlerim
@@ -37,7 +37,6 @@
                 <thead class="table-light">
                     <tr>
                         <th>Test ady</th>
-                        <th>Ugry</th>
                         @if (isStudent && !isAdmin)
                         {
                             <th>Taýýarlan mugallym</th>
@@ -57,7 +56,6 @@
                         var last = userName?.LastName;
                         <tr>
                             <td>@test.Name</td>
-                            <td>@test.Description</td>
                             @if (isStudent && !isAdmin)
                             {
                             <td>@first @last</td>

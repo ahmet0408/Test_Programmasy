@@ -116,6 +116,7 @@ namespace TestProgrammasy.Controllers
                 Id = test.Id,
                 Name = test.Name,
                 Description = test.Description,
+                Level = test.Level,
                 TotalQuestions = test.Questions.Count,
                 TotalPoints = test.Questions.Sum(q => q.Points),
                 Questions = test.Questions.Select(q => new QuestionPreviewDTO
@@ -128,6 +129,8 @@ namespace TestProgrammasy.Controllers
 
             return View(viewModel);
         }
+
+        
 
     }
 }
