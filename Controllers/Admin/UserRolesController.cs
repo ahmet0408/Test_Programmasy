@@ -31,10 +31,10 @@ namespace TestProgrammasy.Controllers.Admin
             {
                 var thisViewModel = new UserRolesDTO();
                 thisViewModel.UserId = user.Id;
-                thisViewModel.Email = user.Email;
+                thisViewModel.UserName = user.UserName;
                 thisViewModel.FirstName = user.FirstName;
                 thisViewModel.LastName = user.LastName;
-                thisViewModel.PhoneNumber = user.PhoneNumber;
+                thisViewModel.UserType = user.UserType;
                 thisViewModel.Roles = await GetUserRoles(user);
                 userRolesViewModel.Add(thisViewModel);
             }

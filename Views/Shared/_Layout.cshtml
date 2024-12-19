@@ -74,7 +74,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş sahypa</a>
                         </li>
-                        @if (User.IsInRole("Teacher"))
+                        @if (User.IsInRole("Student") && !User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Teacher") && !User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Test" asp-action="TestByUser" asp-route-userId=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Testlerim</a>
@@ -84,7 +90,7 @@
                         @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Test" asp-action="Create">Täze_Test_Goşmak</a>
                         </li>  *@
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin")) 
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
@@ -103,7 +109,7 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container" >
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

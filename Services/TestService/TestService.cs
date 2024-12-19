@@ -23,9 +23,25 @@ namespace TestProgrammasy.Services.TestService
 
         public async Task CreateTest(CreateTestDTO createTestDTO)
         {
-            Test test = _mapper.Map<Test>(createTestDTO);
-            await _dbContext.Tests.AddAsync(test);
-            await _dbContext.SaveChangesAsync();
+            if (createTestDTO != null)
+            {
+                // Soraglaryň her biri üçin dogry jogaby bellemek
+                foreach (var question in createTestDTO.Questions)
+                {
+                    if (question.CorrectAnswerIndex >= 0 &&
+                        question.CorrectAnswerIndex < question.Answers.Count)
+                    {
+                        foreach (var answer in question.Answers)
+                        {
+                            answer.IsCorrect = false;
+                        }
+                        question.Answers[question.CorrectAnswerIndex].IsCorrect = true;
+                    }
+                }
+                Test test = _mapper.Map<Test>(createTestDTO);
+                await _dbContext.Tests.AddAsync(test);
+                await _dbContext.SaveChangesAsync();
+            }
         }
         public async Task EditTest(EditTestDTO editTestDTO)
         {
