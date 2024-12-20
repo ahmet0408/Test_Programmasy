@@ -1,0 +1,59 @@
+﻿@model TestProgrammasy.DTOs.TestAnalyticsViewModel 
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Umumy Statistika</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="gradesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Dersleriň Statistikasy</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="subjectsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const gradesData = @Json.Serialize(Model.GradesDistribution);
+        const subjectsData = @Json.Serialize(Model.SubjectsPerformance);
+
+        new Chart(document.getElementById('gradesChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(gradesData),
+                datasets: [{
+                    data: Object.values(gradesData),
+                    backgroundColor: [
+                        '#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6c757d'
+                    ]
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('subjectsChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(subjectsData),
+                datasets: [{
+                    label: 'Orta Ball',
+                    data: Object.values(subjectsData),
+                    backgroundColor: '#007bff'
+                }]
+            }
+        });
+    </script>
+}

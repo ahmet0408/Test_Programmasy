@@ -1,0 +1,140 @@
+﻿@model TestProgrammasy.DTOs.TestResultDTO
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Test Netijesi: @Model.TestTitle</h3>
+            <div>
+                <a href="@Url.Action("List")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Yza
+                </a>
+                <a href="@Url.Action("ExportPdf", new { id = Model.Id })"
+                   class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i> PDF Export
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Umumy Maglumat</h4>
+                    <table class="table">
+                        <tr>
+                            <th>Okuwçy:</th>
+                            <td>@Model.UserId</td>
+                        </tr>
+                        <tr>
+                            <th>Test:</th>
+                            <td>@Model.TestTitle</td>
+                        </tr>
+                        <tr>
+                            <th>Dersi:</th>
+                            <td>@Model.Subject</td>
+                        </tr>
+                        <tr>
+                            <th>Sene:</th>
+                            <td>@Model.CompletedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4>Netije</h4>
+                    <div class="result-summary">
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: @Model.Percentage%">
+                                @Model.Percentage%
+                            </div>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <th>Ball:</th>
+                                <td>@Model.EarnedPoints / @Model.TotalPoints</td>
+                            </tr>
+                            <tr>
+                                <th>Göterim:</th>
+                                <td>@Model.Percentage%</td>
+                            </tr>
+                            <tr>
+                                <th>Baha:</th>
+                                <td>
+                                    <span class="badge badge-@GetGradeClass(Model.Grade)">
+                                        @Model.Grade
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .result-summary {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .progress {
+        height: 25px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+    }
+
+    .badge {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+
+    .table-responsive {
+        margin-top: 20px;
+    }
+
+    .btn-sm {
+        margin: 0 2px;
+    }
+</style>
+
+@functions {
+    string GetGradeClass(string grade)
+    {
+        return grade switch
+        {
+            "A" => "success",
+            "B" => "info",
+            "C" => "warning",
+            "D" => "secondary",
+            _ => "danger"
+        };
+    }
+}
