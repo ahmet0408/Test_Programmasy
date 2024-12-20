@@ -8,6 +8,7 @@ namespace TestProgrammasy.DTOs
         public int Id { get; set; }
         public string TestTitle { get; set; }
         public string UserId { get; set; }
+        public int TestId { get; set; }
         public int Score { get; set; }   
         public string Subject { get; set; }
         public int TotalPoints { get; set; }

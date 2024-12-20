@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,6 +98,69 @@ namespace TestProgrammasy.Services.TestService
             var test = _dbContext.Tests.Include(p => p.Questions).ThenInclude(p => p.Answers).ToList();
             var result = _mapper.Map<List<TestDTO>>(test);
             return result;
+        }
+        public async Task CreateTestResult(TestResultDTO testResultDTO)
+        {
+            if (testResultDTO != null)
+            {
+                TestResult testResult = _mapper.Map<TestResult>(testResultDTO);
+                await _dbContext.TestResults.AddAsync(testResult);
+                await _dbContext.SaveChangesAsync();
+            }
+                
+        }
+
+        private string CalculateGrade(double percentage)
+        {
+            if (percentage >= 90) return "A";
+            if (percentage >= 80) return "B";
+            if (percentage >= 70) return "C";
+            if (percentage >= 60) return "D";
+            return "F";
+        }
+
+        public async Task<TestResultDTO> CalculateTestResult(int testId, TestProgressDTO progress)
+        {
+            var test = await GetTestForPreviewById(testId);
+
+            if (test == null)
+                throw new ArgumentException("Test tapylmady");
+
+            int earnedPoints = 0;
+            int totalPoints = 0;
+
+            // Her sorag üçin ball hasaplamak
+            foreach (var question in test.Questions)
+            {
+                totalPoints += question.Points;
+
+                // Progress-den alnan jogaby barlamak
+                if (question.Id == progress.QuestionId)
+                {
+                    var correctAnswer = question.Answers.FirstOrDefault(a => a.IsCorrect);
+                    if (correctAnswer != null && correctAnswer.Id == progress.AnswerId)
+                    {
+                        earnedPoints += question.Points;
+                    }
+                }
+            }
+
+            double percentage = totalPoints > 0 ? (double)earnedPoints / totalPoints * 100 : 0;
+
+            string grade = CalculateGrade(percentage);
+
+            return new TestResultDTO
+            {
+                TestTitle = test.Name,
+                TestId = progress.TestId,
+                UserId = progress.UserId,
+                //Subject = test.Subject
+                TotalPoints = totalPoints,
+                //EarnedPoints = earnedPoints,
+                Percentage = Math.Round(percentage, 2),
+                Grade = grade,
+                CompletedDate = DateTime.Now
+            };
         }
     }
 }

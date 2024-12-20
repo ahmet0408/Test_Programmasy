@@ -14,7 +14,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestProgrammasy.Data;
 using TestProgrammasy.Models;
+using TestProgrammasy.Services.PdfService;
+using TestProgrammasy.Services.TestResultService;
 using TestProgrammasy.Services.TestService;
+using TestProgrammasy.Services.UserService;
 
 namespace TestProgrammasy
 {
@@ -48,6 +51,9 @@ namespace TestProgrammasy
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddTransient<ITestService, TestService>();
+            services.AddTransient<ITestResultService, TestResultService>();
+            services.AddTransient<IPdfService, PdfService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);

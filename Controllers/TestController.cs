@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ using TestProgrammasy.Data;
 using TestProgrammasy.DTOs;
 using TestProgrammasy.Models;
 using TestProgrammasy.Services.TestService;
+using static System.Collections.Specialized.BitVector32;
 
 namespace TestProgrammasy.Controllers
 {
@@ -130,7 +133,57 @@ namespace TestProgrammasy.Controllers
             return View(viewModel);
         }
 
-        
+        public async Task<IActionResult> StartTest(int id)
+        {
+            var test = await _testService.GetTestForPreviewById(id);
+            if (test == null) return NotFound();
+
+            // Test başlanda progress başlatmak
+            var progress = new TestProgressDTO
+            {
+                TestId = id,
+                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                QuestionId = test.Questions.First().Id,
+                StartDate = DateTime.Now
+            };
+
+            // Progress-i session-da saklamak
+            HttpContext.Session.SetString("TestProgress", JsonConvert.SerializeObject(progress));
+            //HttpContext.Session.SetString("StartTime", JsonConvert.SerializeObject(DateTime.Now));
+
+            return View(test);
+        }
+
+        [HttpPost]
+        public IActionResult SaveAnswer([FromBody]TestProgressDTO testProgressDTO)
+        {
+            //var progress = HttpContext.Session.GetObject<TestProgressDTO>("TestProgress");
+            var value = HttpContext.Session.GetString("TestProgress");
+            var progress = (value == null) ? default : JsonConvert.DeserializeObject<TestProgressDTO>(value); 
+            progress.QuestionId = testProgressDTO.QuestionId;
+            progress.AnswerId = testProgressDTO.AnswerId;
+
+            HttpContext.Session.SetString("TestProgress", JsonConvert.SerializeObject(progress));
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinishTest([FromBody] int testId)
+        {
+            var value = HttpContext.Session.GetString("TestProgress");
+            var progress = (value == null) ? default : JsonConvert.DeserializeObject<TestProgressDTO>(value);            
+
+            // Test netijelerini hasaplamak
+            var result = await _testService.CalculateTestResult(testId, progress);
+
+            // Netijeleri bazada saklamak
+            await _testService.CreateTestResult(result);
+
+            return Json(new { success = true, redirectUrl = "/TestResult/Index/" + result.Id.ToString() });
+            //Url.Action("TestResult", new { id = result.Id }) }
+    }
+
 
     }
 }

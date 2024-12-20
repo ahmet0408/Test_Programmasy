@@ -1,1 +1,338 @@
-﻿
+﻿@model TestProgrammasy.DTOs.TestDTO
+
+<div class="test-container" data-test-id="@Model.Id">
+    <div class="test-header">
+        <h2>@Model.Name</h2>
+        @if (Model.TimeLimit > 0)
+        {
+            <div class="timer" id="timer" data-time="@Model.TimeLimit"></div>
+        }
+        <div class="progress mb-3">
+            <div class="progress-bar" role="progressbar" style="width: 0%"
+                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                0/0 sorag
+            </div>
+        </div>
+    </div>
+
+    <div class="question-container">
+        @foreach (var question in Model.Questions)
+        {
+            <div class="question" id="question-@question.Id" style="display: none;">
+                <h3>@question.QuestionText</h3>
+                <div class="answers">
+                    @foreach (var answer in question.Answers)
+                    {
+                        <div class="answer-option">
+                            <input type="radio" name="q@(question.Id)" value="@answer.Id"
+                                   id="answer-@answer.Id">
+                            <label for="answer-@answer.Id">@answer.AnswerText</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="test-controls">
+        <button id="skipQuestion" class="btn btn-warning">Bökmek</button>
+        <button id="nextQuestion" class="btn btn-primary">Indiki Sorag</button>
+        <button id="finishTest" class="btn btn-success" style="display: none;">
+            Tamamlap Teslim Et
+        </button>
+    </div>
+</div>
+
+<div class="modal" id="confirmStartModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Testi Başlatmak</h5>
+            </div>
+            <div class="modal-body">
+                <p>Bu testi başlamak isleýärsiňizmi? Wagtyňyz başlanda yzyna dolanyp bolmaýar.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ýok</button>
+                <button type="button" class="btn btn-primary" id="startTestConfirm">Hawa</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .progress {
+        height: 25px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        margin: 20px 0;
+    }
+
+    .progress-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: width 0.3s ease;
+        background-color: #007bff;
+    }
+
+    .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    .test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .timer {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #dc3545;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f8f9fa;
+    }
+
+    .question {
+        margin-bottom: 30px;
+    }
+
+        .question h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+    .answer-option {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+        .answer-option:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+    .test-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+    }
+
+    @@media (max-width: 768px) {
+        .test-container
+
+    {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .test-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    }
+</style>
+@section Scripts {
+    <script>
+                let currentQuestionIndex = 0;
+        let questions = [];
+        let timer = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            questions = document.querySelectorAll('.question');
+            showConfirmDialog();
+        });
+
+        function showConfirmDialog() {
+            const modal = document.getElementById('confirmStartModal');
+            modal.style.display = 'block';
+
+            document.getElementById('startTestConfirm').onclick = function() {
+                modal.style.display = 'none';
+                startTest();
+            };
+        }
+
+        function startTest() {
+            showQuestion(0);
+            if (document.getElementById('timer')) {
+                startTimer();
+            }
+        }
+
+        function showQuestion(index) {
+            questions.forEach(q => q.style.display = 'none');
+            if (questions[index]) {
+                questions[index].style.display = 'block';
+            }
+
+            updateNavigationButtons();
+        }
+
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+            let timeLeft = parseInt(timerElement.dataset.time);
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `Galan wagt: ${timeLeft} sekunt`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    finishTest();
+                }
+            }, 1000);
+        }
+
+        document.getElementById('nextQuestion').onclick = function() {
+            saveCurrentAnswer();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        };
+
+        document.getElementById('skipQuestion').onclick = function() {
+            const skippedQuestion = questions[currentQuestionIndex];
+            questions[questions.length - 1].parentNode.appendChild(skippedQuestion);
+            showQuestion(currentQuestionIndex);
+        };
+
+        document.getElementById('finishTest').onclick = function() {
+            if (confirm('Testi tamamlamak isleýärsiňizmi?')) {
+                finishTest();
+            }
+        };
+
+        function saveCurrentAnswer() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const selectedAnswer = currentQuestion.querySelector('input[type="radio"]:checked');
+            console.log("111 "+currentQuestion.id.split('-')[1]+"     "+selectedAnswer.value);
+            const testProgressDTO = {
+                QuestionId: currentQuestion.id.split('-')[1],
+                AnswerId: selectedAnswer.value
+            };
+            if (selectedAnswer) {
+                fetch('/Test/SaveAnswer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        testProgressDTO
+                    )
+                });
+            }
+        }
+                function updateNavigationButtons() {
+            const nextButton = document.getElementById('nextQuestion');
+            const skipButton = document.getElementById('skipQuestion');
+            const finishButton = document.getElementById('finishTest');
+
+            // If we're on the last question
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.style.display = 'none';
+                skipButton.style.display = 'none';
+                finishButton.style.display = 'block';
+            } else {
+                nextButton.style.display = 'block';
+                skipButton.style.display = 'block';
+                finishButton.style.display = 'none';
+            }
+
+            // Disable next button if no answer is selected for current question
+            const currentQuestion = questions[currentQuestionIndex];
+            const selectedAnswer = currentQuestion.querySelector('input[type="radio"]:checked');
+            nextButton.disabled = !selectedAnswer;
+
+            // Update progress indicator if you have one
+            updateProgressIndicator();
+        }
+
+        // Helper function to update progress indicator
+        function updateProgressIndicator() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            const progressElement = document.querySelector('.progress-bar');
+            if (progressElement) {
+                progressElement.style.width = `${progress}%`;
+                progressElement.textContent = `${currentQuestionIndex + 1}/${questions.length} sorag`;
+            }
+        }
+
+        // Add event listener for radio button changes to enable/disable next button
+        document.querySelectorAll('.question input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', updateNavigationButtons);
+        });
+
+        async function finishTest() {
+            clearInterval(timer);
+                const testId = document.querySelector('.test-container').dataset.testId;
+                
+            try {
+                const response = await fetch('/Test/FinishTest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    testId
+                )
+            });
+            console.log(response);
+            const data =await response.json();
+            if (data.success) {
+                    window.location.href = data.redirectUrl;
+                }
+            } catch(error){
+            console.error('Error:', error);
+            alert('Test tamamlamakda ýalňyşlyk ýüze çykdy');
+        };
+        }
+        // document.querySelector('[data-test-id]').dataset.testId
+    </script>
+}
