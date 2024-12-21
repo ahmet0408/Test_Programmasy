@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestProgrammasy.DTOs;
@@ -29,7 +30,7 @@ public class TestResultController : Controller
         var result = await _testResultService.GetTestResultByIdAsync(id);
 
         if (result == null) return NotFound();
-
+        result.StudentName = await _userService.GetUserFullName(result.UserId);
         // Admin we mugallymlarähli netijeleri görüp bilýär
         // Studentler diňe öz netijelerini görüp bilýär
         if (userRole == "Student" && result.UserId != User.Identity.Name)
@@ -40,7 +41,9 @@ public class TestResultController : Controller
 
     public async Task<IActionResult> List()
     {
-        var userRole = await _userService.GetUserRole(User.Identity.Name);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userRole = await _userService.GetUserRole(userId);     
+
         var results = new List<TestResultDTO>();
 
         switch (userRole)
@@ -49,13 +52,12 @@ public class TestResultController : Controller
                 results = await _testResultService.GetAllTestResultsAsync();
                 break;
             case "Teacher":
-                results = await _testResultService.GetStudentTestResultsAsync(User.Identity.Name);
+                results = await _testResultService.GetTeacherTestResultsAsync(userId);
                 break;
             case "Student":
-                results = await _testResultService.GetStudentTestResultsAsync(User.Identity.Name);
+                results = await _testResultService.GetStudentTestResultsAsync(userId);
                 break;
         }
-
         return View(results);
     }
 
@@ -66,13 +68,14 @@ public class TestResultController : Controller
         if (result == null) return NotFound();
 
         var pdf = await _pdfService.GenerateTestResultPdfAsync(result);
-        return File(pdf, "application/pdf", $"TestResult_{id}.pdf");
+        return File(pdf, "application/pdf", $"{result.StudentName}.pdf");
     }
 
     [HttpGet]
     public async Task<IActionResult> Analytics()
     {
-        var userRole = await _userService.GetUserRole(User.Identity.Name);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userRole = await _userService.GetUserRole(userId);
         if (userRole != "Admin" && userRole != "Teacher")
             return Forbid();
 

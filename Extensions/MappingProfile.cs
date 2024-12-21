@@ -21,7 +21,11 @@ namespace MyLibrary.Extensions
             CreateMap<Answer, AnswerDTO>().ReverseMap();
             CreateMap<Answer, EditAnswerDTO>().ReverseMap();
 
-            CreateMap<TestResultDTO, TestResult>().ReverseMap();
+            CreateMap<TestResultDTO, TestResult>();
+            CreateMap<TestResult, TestResultDTO>()
+                .ForMember(p => p.StudentName, p => p.MapFrom(p => p.User.FirstName + " " + p.User.LastName));
+                
+
             //CreateMap<CreateAboutDTO, About>();
             //CreateMap<AboutTranslateDTO, AboutTranslate>().ReverseMap();
             //CreateMap<EditAboutDTO, About>().ReverseMap();

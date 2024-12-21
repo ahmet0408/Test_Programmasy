@@ -135,54 +135,59 @@ namespace TestProgrammasy.Controllers
 
         public async Task<IActionResult> StartTest(int id)
         {
-            var test = await _testService.GetTestForPreviewById(id);
+            var test =await _testService.GetTestForPreviewById(id);
             if (test == null) return NotFound();
 
-            // Test başlanda progress başlatmak
+            // Test.Questions kolleksiýasynyň dolulygy barlanmaly
+            if (test.Questions == null || !test.Questions.Any())
+            {
+                return NotFound("Bu test üçin soraglar tapylmady");
+            }
+
+            // Test başlanda progress modelini döretmek
             var progress = new TestProgressDTO
             {
                 TestId = id,
-                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                QuestionId = test.Questions.First().Id,
-                StartDate = DateTime.Now
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                StartDate = DateTime.Now,
+                Answers = new Dictionary<int, int>()
             };
 
             // Progress-i session-da saklamak
-            HttpContext.Session.SetString("TestProgress", JsonConvert.SerializeObject(progress));
-            //HttpContext.Session.SetString("StartTime", JsonConvert.SerializeObject(DateTime.Now));
+            HttpContext.Session.SetString("TestProgress",
+                System.Text.Json.JsonSerializer.Serialize(progress));
 
             return View(test);
         }
 
         [HttpPost]
-        public IActionResult SaveAnswer([FromBody]TestProgressDTO testProgressDTO)
+        public IActionResult SaveAnswer([FromBody] SaveAnswerRequestDTO request)
         {
-            //var progress = HttpContext.Session.GetObject<TestProgressDTO>("TestProgress");
-            var value = HttpContext.Session.GetString("TestProgress");
-            var progress = (value == null) ? default : JsonConvert.DeserializeObject<TestProgressDTO>(value); 
-            progress.QuestionId = testProgressDTO.QuestionId;
-            progress.AnswerId = testProgressDTO.AnswerId;
+            var progressJson = HttpContext.Session.GetString("TestProgress");
+            var progress = System.Text.Json.JsonSerializer.Deserialize<TestProgressDTO>(progressJson);
 
-            HttpContext.Session.SetString("TestProgress", JsonConvert.SerializeObject(progress));
+            progress.Answers[request.questionId] = request.answerId;
+
+            HttpContext.Session.SetString("TestProgress",
+                System.Text.Json.JsonSerializer.Serialize(progress));
 
             return Json(new { success = true });
         }
 
         [HttpPost]
-        public async Task<IActionResult> FinishTest([FromBody] int testId)
+        public async Task<IActionResult> CompleteTest()
         {
-            var value = HttpContext.Session.GetString("TestProgress");
-            var progress = (value == null) ? default : JsonConvert.DeserializeObject<TestProgressDTO>(value);            
+            var progressJson = HttpContext.Session.GetString("TestProgress");
+            var progress = System.Text.Json.JsonSerializer.Deserialize<TestProgressDTO>(progressJson);
 
-            // Test netijelerini hasaplamak
-            var result = await _testService.CalculateTestResult(testId, progress);
+            var result =await _testService.CalculateTestResult(progress);
 
-            // Netijeleri bazada saklamak
-            await _testService.CreateTestResult(result);
+            // Session-y arassalamak
+            HttpContext.Session.Remove("TestProgress");
 
-            return Json(new { success = true, redirectUrl = "/TestResult/Index/" + result.Id.ToString() });
-            //Url.Action("TestResult", new { id = result.Id }) }
-    }
+            return Json(new { redirectUrl = "/TestResult/Index/" + result.Id.ToString() });
+
+        }
 
 
     }

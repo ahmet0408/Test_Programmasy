@@ -7,7 +7,8 @@ namespace TestProgrammasy.Models
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public string TestTitle { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public ApplicationUser User { get; set; }
         public int TestId { get; set; }
         public Test Test { get; set; }

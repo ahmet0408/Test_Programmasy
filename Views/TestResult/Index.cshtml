@@ -3,7 +3,7 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Test Netijesi: @Model.TestTitle</h3>
+            <h3>Test Netijesi: @Model.Name</h3>
             <div>
                 <a href="@Url.Action("List")" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Yza
@@ -21,19 +21,19 @@
                     <table class="table">
                         <tr>
                             <th>Okuwçy:</th>
-                            <td>@Model.UserId</td>
+                            <td>@Model.StudentName</td>
                         </tr>
                         <tr>
                             <th>Test:</th>
-                            <td>@Model.TestTitle</td>
+                            <td>@Model.Name</td>
                         </tr>
                         <tr>
                             <th>Dersi:</th>
-                            <td>@Model.Subject</td>
+                            <td>@Model.Description</td>
                         </tr>
                         <tr>
                             <th>Sene:</th>
-                            <td>@Model.CompletedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@Model.CompletedAt.ToString("dd.MM.yyyy HH:mm")</td>
                         </tr>
                     </table>
                 </div>
@@ -49,7 +49,7 @@
                         <table class="table">
                             <tr>
                                 <th>Ball:</th>
-                                <td>@Model.EarnedPoints / @Model.TotalPoints</td>
+                                <td>@Model.Score / @Model.TotalPoints</td>
                             </tr>
                             <tr>
                                 <th>Göterim:</th>

@@ -52,11 +52,11 @@ namespace TestProgrammasy.Services.PdfService
             gfx.DrawImage(logo, 50, 20, 60, 60);
 
             // Mekdebiň ady
-            gfx.DrawString("Berkarar mekdebi", titleFont, headerColor,
+            gfx.DrawString("Baýramaly şäheriniň 4-nji orta mekdebi", titleFont, headerColor,
                 new XRect(150, 20, 400, 30), XStringFormats.CenterLeft);
 
             // Test netijesi ady
-            gfx.DrawString("Test Netijesi Hasabaty", titleFont, headerColor,
+            gfx.DrawString("Test Netijesi we Hasabaty", titleFont, headerColor,
                 new XRect(150, 50, 400, 30), XStringFormats.CenterLeft);
         }
 
@@ -71,7 +71,7 @@ namespace TestProgrammasy.Services.PdfService
     XFont headerFont, XFont normalFont, XFont valueFont, XBrush textColor, ref double yPosition)
         {
             var leftMargin = 50;
-            var columnWidth = 200;
+            var columnWidth = 300;
             var tempY = yPosition;
 
             gfx.DrawString("Okuwçynyň Maglumatlary:", headerFont, textColor,
@@ -79,7 +79,7 @@ namespace TestProgrammasy.Services.PdfService
             yPosition += 30;
 
             // Birinji sütün
-            DrawInfoField(gfx, "Okuwçynyň ady:", result.UserId, normalFont, valueFont,
+            DrawInfoField(gfx, "Okuwçy:", result.StudentName, normalFont, valueFont,
                 textColor, leftMargin, ref yPosition);
 
             tempY = yPosition - 20;
@@ -88,21 +88,21 @@ namespace TestProgrammasy.Services.PdfService
                 textColor, leftMargin + columnWidth, ref tempY);
 
             // Birinji sütün
-            DrawInfoField(gfx, "Test ady:", result.TestTitle, normalFont, valueFont,
+            DrawInfoField(gfx, "Test ady:", result.Name, normalFont, valueFont,
                 textColor, leftMargin, ref yPosition);
 
             tempY = yPosition - 20;
             // Ikinji sütün
-            DrawInfoField(gfx, "Dersi:", result.TestTitle, normalFont, valueFont,
+            DrawInfoField(gfx, "Dersi:", result.Name, normalFont, valueFont,
                 textColor, leftMargin + columnWidth, ref tempY);
 
             // Birinji sütün
-            DrawInfoField(gfx, "Sene:", result.CompletedDate.ToString("dd.MM.yyyy"), normalFont, valueFont,
+            DrawInfoField(gfx, "Sene:", result.CompletedAt.ToString("dd.MM.yyyy"), normalFont, valueFont,
                 textColor, leftMargin, ref yPosition);
 
             tempY = yPosition - 20;
             // Ikinji sütün
-            DrawInfoField(gfx, "Wagty:", result.CompletedDate.ToString("HH:mm"), normalFont, valueFont,
+            DrawInfoField(gfx, "Wagty:", result.CompletedAt.ToString("HH:mm"), normalFont, valueFont,
                 textColor, leftMargin + columnWidth, ref tempY);
         }
 
@@ -118,7 +118,7 @@ namespace TestProgrammasy.Services.PdfService
 
             // Jikme-jik netijeler
             var leftMargin = 50;
-            DrawInfoField(gfx, "Dogry jogaplar:", $"{result.EarnedPoints}/{result.TotalPoints}",
+            DrawInfoField(gfx, "Dogry jogaplar:", $"{result.Score}/{result.TotalPoints}",
                 normalFont, valueFont, textColor, leftMargin, ref yPosition);
             DrawInfoField(gfx, "Göterim:", $"{result.Percentage}%", normalFont, valueFont,
                 textColor, leftMargin, ref yPosition);

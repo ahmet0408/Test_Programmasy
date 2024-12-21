@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using TestProgrammasy.Data;
 using TestProgrammasy.DTOs;
 using TestProgrammasy.Models;
+using TestProgrammasy.Services.UserService;
 
 namespace TestProgrammasy.Services.TestResultService
 {
@@ -13,11 +15,13 @@ namespace TestProgrammasy.Services.TestResultService
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public TestResultService(ApplicationDbContext dbContext, IMapper mapper)
+        public TestResultService(ApplicationDbContext dbContext, IMapper mapper, IUserService userService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<TestResultDTO> GetTestResultByIdAsync(int id)
@@ -32,7 +36,7 @@ namespace TestProgrammasy.Services.TestResultService
             {
                 Id = result.Id,
                 TestId = result.TestId,
-                TestTitle = result.TestTitle,
+                Name = result.Name,
                 UserId = result.UserId,
                 Score = result.Score,
                 //Subject = result.Subject,
@@ -53,46 +57,25 @@ namespace TestProgrammasy.Services.TestResultService
                 {
                     Id = tr.Id,
                     TestId = tr.TestId,
-                    TestTitle = tr.TestTitle,
+                    Name = tr.Name,
                     UserId = tr.UserId,
                     Score = tr.Score,
-                    //Subject = tr.Subject,
+                    StudentName = tr.User.FirstName + " " + tr.User.LastName,
+                    Description = tr.Description,
                     TotalPoints = tr.TotalPoints,
-                    //EarnedPoints = tr.EarnedPoints,
                     Percentage = tr.Percentage,
                     Grade = tr.Grade,
-                    CompletedDate = tr.CompletedAt
+                    CompletedAt = tr.CompletedAt
                 })
                 .ToListAsync();
         }
 
-        //public async Task<List<TestResultDTO>> GetTeacherTestResultsAsync(string teacherId)
-        //{
-        //    var teacherSubjects = await _context.TeacherSubjects
-        //        .Where(ts => ts.TeacherId == teacherId)
-        //        .Select(ts => ts.Subject)
-        //        .ToListAsync();
-
-        //    return await _context.TestResults
-        //        .Include(tr => tr.User)
-        //        .Where(tr => teacherSubjects.Contains(tr.Subject))
-        //        .OrderByDescending(tr => tr.CompletedDate)
-        //        .Select(tr => new TestResultDTO
-        //        {
-        //            Id = tr.Id,
-        //            TestId = tr.TestId,
-        //            TestTitle = tr.TestTitle,
-        //            UserId = tr.UserId,
-        //            Score = tr.Score,
-        //            Subject = tr.Subject,
-        //            TotalPoints = tr.TotalPoints,
-        //            EarnedPoints = tr.EarnedPoints,
-        //            Percentage = tr.Percentage,
-        //            Grade = tr.Grade,
-        //            CompletedDate = tr.CompletedDate
-        //        })
-        //        .ToListAsync();
-        //}
+        public async Task<List<TestResultDTO>> GetTeacherTestResultsAsync(string userId)
+        {
+            var testResults = await _dbContext.TestResults.Include(p => p.Test).Include(p => p.User).Where(p => p.Test.UserId == userId).OrderByDescending(p => p.CompletedAt).ToListAsync();
+            var result = _mapper.Map<List<TestResultDTO>>(testResults);
+            return result;
+        }
 
         public async Task<List<TestResultDTO>> GetStudentTestResultsAsync(string studentId)
         {
@@ -103,15 +86,14 @@ namespace TestProgrammasy.Services.TestResultService
                 {
                     Id = tr.Id,
                     TestId = tr.TestId,
-                    TestTitle = tr.TestTitle,
+                    Name = tr.Name,
                     UserId = tr.UserId,
-                    Score = tr.Score,
-                    //Subject = tr.Subject,
+                    Score = tr.Score,                    
+                    Description = tr.Description,
                     TotalPoints = tr.TotalPoints,
-                    //EarnedPoints = tr.EarnedPoints,
                     Percentage = tr.Percentage,
                     Grade = tr.Grade,
-                    CompletedDate = tr.CompletedAt
+                    CompletedAt = tr.CompletedAt
                 })
                 .ToListAsync();
         }
@@ -131,15 +113,15 @@ namespace TestProgrammasy.Services.TestResultService
             {
                 Id = result.Id,
                 TestId = result.TestId,
-                TestTitle = result.TestTitle,
+                Name = result.Name,
                 UserId = result.UserId,
                 Score = result.Score,
-                //Subject = result.Subject,
+                StudentName = await _userService.GetUserFullName(result.UserId),
+                Description = result.Description,
                 TotalPoints = result.TotalPoints,
-                //EarnedPoints = result.EarnedPoints,
                 Percentage = result.Percentage,
                 Grade = result.Grade,
-                CompletedDate = result.CompletedAt
+                CompletedAt = result.CompletedAt
             };
         }
 
@@ -152,7 +134,7 @@ namespace TestProgrammasy.Services.TestResultService
                 .ToDictionary(g => g.Key, g => g.Count());
 
             var subjectsPerformance = results
-                .GroupBy(r => r.TestTitle)
+                .GroupBy(r => r.Name)
                 .ToDictionary(
                     g => g.Key,
                     g => g.Average(r => r.Percentage)

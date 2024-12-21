@@ -1,338 +1,392 @@
 ﻿@model TestProgrammasy.DTOs.TestDTO
+@{
+    ViewData["Title"] = "Test: " + Model.Name;
+}
 
-<div class="test-container" data-test-id="@Model.Id">
+<div class="test-container">
     <div class="test-header">
         <h2>@Model.Name</h2>
         @if (Model.TimeLimit > 0)
         {
             <div class="timer" id="timer" data-time="@Model.TimeLimit"></div>
         }
-        <div class="progress mb-3">
-            <div class="progress-bar" role="progressbar" style="width: 0%"
-                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                0/0 sorag
-            </div>
-        </div>
     </div>
 
-    <div class="question-container">
-        @foreach (var question in Model.Questions)
-        {
-            <div class="question" id="question-@question.Id" style="display: none;">
-                <h3>@question.QuestionText</h3>
-                <div class="answers">
-                    @foreach (var answer in question.Answers)
-                    {
-                        <div class="answer-option">
-                            <input type="radio" name="q@(question.Id)" value="@answer.Id"
-                                   id="answer-@answer.Id">
-                            <label for="answer-@answer.Id">@answer.AnswerText</label>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-
-    <div class="test-controls">
-        <button id="skipQuestion" class="btn btn-warning">Bökmek</button>
-        <button id="nextQuestion" class="btn btn-primary">Indiki Sorag</button>
-        <button id="finishTest" class="btn btn-success" style="display: none;">
-            Tamamlap Teslim Et
-        </button>
-    </div>
-</div>
-
-<div class="modal" id="confirmStartModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div id="confirmationModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Testi Başlatmak</h5>
-            </div>
-            <div class="modal-body">
-                <p>Bu testi başlamak isleýärsiňizmi? Wagtyňyz başlanda yzyna dolanyp bolmaýar.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ýok</button>
-                <button type="button" class="btn btn-primary" id="startTestConfirm">Hawa</button>
+            <h3>Tassyklama</h3>
+            <p>Bu testi başlamak isleýärsiňizmi? Wagtyňyz başlanda yzyna dolanyp bolmaýar.</p>
+            <div class="modal-buttons">
+                <button id="confirmStart" class="btn btn-primary">Hawa</button>
+                <button id="cancelStart" class="btn btn-secondary">Ýok</button>
             </div>
         </div>
     </div>
+
+    <div id="testContent" style="display: none;">
+        <div class="question-container">
+            <div id="currentQuestion"></div>
+            <div class="navigation-buttons">
+                <button id="nextQuestion" class="btn btn-primary">Indiki Sorag</button>
+                <button id="skipQuestion" class="btn btn-secondary">Bökmek</button>
+                <button id="completeTest" class="btn btn-success" style="display: none;">Tamamlap Teslim Et</button>
+            </div>
+        </div>
+
+        <div class="progress-info">
+            <span>Jogaplanan: <span id="answeredCount">0</span>/@Model.Questions.Count</span>
+        </div>
+    </div>
 </div>
-<style>
-    .progress {
-        height: 25px;
-        background-color: #f0f0f0;
-        border-radius: 5px;
-        margin: 20px 0;
-    }
 
-    .progress-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        transition: width 0.3s ease;
-        background-color: #007bff;
-    }
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-    .test-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-
-    .test-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #eee;
-    }
-
-    .timer {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #dc3545;
-        padding: 10px;
-        border-radius: 5px;
-        background: #f8f9fa;
-    }
-
-    .question {
-        margin-bottom: 30px;
-    }
-
-        .question h3 {
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
             margin-bottom: 20px;
-            color: #2c3e50;
         }
 
-    .answer-option {
-        margin: 10px 0;
-        padding: 10px;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc3545;
+            padding: 10px;
+            border-radius: 5px;
+            background: #fff3f3;
+        }
 
-        .answer-option:hover {
+        .question-container {
             background: #f8f9fa;
-            cursor: pointer;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
-    .test-controls {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 2px solid #eee;
-    }
+        .answer-option {
+            display: block;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    .btn {
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
+            .answer-option:hover {
+                background-color: #e9ecef;
+                border-color: #adb5bd;
+            }
 
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-    }
+            .answer-option.selected {
+                background-color: #cfe2ff;
+                border-color: #0d6efd;
+            }
 
-    .modal-content {
-        background: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 500px;
-    }
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-    @@media (max-width: 768px) {
-        .test-container
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
 
-    {
-        padding: 15px;
-        margin: 10px;
-    }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            margin: 15% auto;
+        }
 
-    .test-controls {
-        flex-direction: column;
-        gap: 10px;
-    }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-    .btn {
-        width: 100%;
-    }
+        .progress-info {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
 
-    }
-</style>
+        .loading-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0%
+
+        {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .test-container
+
+        {
+            margin: 10px;
+            padding: 15px;
+        }
+
+        .navigation-buttons {
+            flex-direction: column;
+        }
+
+        }
+    </style>
+
+
 @section Scripts {
     <script>
-                let currentQuestionIndex = 0;
-        let questions = [];
-        let timer = null;
+        // Sahypany refresh etmegi duruzmak
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+        let currentQuestionIndex = 0;
+        let questions = @Html.Raw(Json.Serialize(Model.Questions));
+        let answers = {};
+        let timerInterval;
 
         document.addEventListener('DOMContentLoaded', function() {
-            questions = document.querySelectorAll('.question');
-            showConfirmDialog();
+            document.getElementById('confirmationModal').style.display = 'block';
+
+            const timerElement = document.getElementById('timer');
+            if (timerElement) {
+                const timeLimit = parseInt(timerElement.dataset.time) * 60;
+                startTimer(timeLimit);
+            }
+
+            document.getElementById('confirmStart').addEventListener('click', function() {
+                document.getElementById('confirmationModal').style.display = 'none';
+                document.getElementById('testContent').style.display = 'block';
+                loadQuestion(currentQuestionIndex);
+            });
+
+            document.getElementById('cancelStart').addEventListener('click', function() {
+                window.location.href = '/Tests';
+            });
+
+            document.getElementById('nextQuestion').addEventListener('click', handleNextQuestion);
+            document.getElementById('skipQuestion').addEventListener('click', handleSkipQuestion);
+            document.getElementById('completeTest').addEventListener('click', completeTest);
         });
 
-        function showConfirmDialog() {
-            const modal = document.getElementById('confirmStartModal');
-            modal.style.display = 'block';
+        function startTimer(timeLimit) {
+            let timeLeft = timeLimit;
+            const timerElement = document.getElementById('timer');
 
-            document.getElementById('startTestConfirm').onclick = function() {
-                modal.style.display = 'none';
-                startTest();
-            };
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `Galan wagt: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    completeTest();
+                }
+            }, 1000);
+
+            updateTimer();
         }
 
-        function startTest() {
-            showQuestion(0);
-            if (document.getElementById('timer')) {
-                startTimer();
-            }
-        }
+                function loadQuestion(index) {
+            const question = questions[index];
+            const questionContainer = document.getElementById('currentQuestion');
 
-        function showQuestion(index) {
-            questions.forEach(q => q.style.display = 'none');
-            if (questions[index]) {
-                questions[index].style.display = 'block';
-            }
+            questionContainer.innerHTML = `
+                <h3>Sorag ${index + 1}</h3>
+                <p>${question.questionText}</p>
+                <div class="answers">
+                    ${question.answers.map(answer => `
+                        <div class="answer-option ${answers[question.id] === answer.id ? 'selected' : ''}"
+                             data-answer-id="${answer.id}">
+                            ${answer.answerText}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.querySelectorAll('.answer-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const isSelected = this.classList.contains('selected');
+                    document.querySelectorAll('.answer-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+
+                    if (!isSelected) {
+                        this.classList.add('selected');
+                        answers[question.id] = parseInt(this.dataset.answerId);
+                        updateAnsweredCount();
+                    } else {
+                        delete answers[question.id];
+                        updateAnsweredCount();
+                    }
+                });
+            });
 
             updateNavigationButtons();
         }
 
-        function startTimer() {
-            const timerElement = document.getElementById('timer');
-            let timeLeft = parseInt(timerElement.dataset.time);
+        function handleNextQuestion() {
+            const selectedOption = document.querySelector('.answer-option.selected');
+            if (selectedOption) {
+                const questionId = questions[currentQuestionIndex].id;
+                const answerId = parseInt(selectedOption.dataset.answerId);
+                saveAnswer(questionId, answerId);
+            }
 
-            timer = setInterval(() => {
-                timeLeft--;
-                timerElement.textContent = `Galan wagt: ${timeLeft} sekunt`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    finishTest();
-                }
-            }, 1000);
-        }
-
-        document.getElementById('nextQuestion').onclick = function() {
-            saveCurrentAnswer();
             if (currentQuestionIndex < questions.length - 1) {
                 currentQuestionIndex++;
-                showQuestion(currentQuestionIndex);
+                loadQuestion(currentQuestionIndex);
             }
-        };
+        }
+                async function saveAnswer(questionId, answerId) {
+            answers[questionId] = answerId;
+            updateAnsweredCount();
 
-        document.getElementById('skipQuestion').onclick = function() {
-            const skippedQuestion = questions[currentQuestionIndex];
-            questions[questions.length - 1].parentNode.appendChild(skippedQuestion);
-            showQuestion(currentQuestionIndex);
-        };
-
-        document.getElementById('finishTest').onclick = function() {
-            if (confirm('Testi tamamlamak isleýärsiňizmi?')) {
-                finishTest();
-            }
-        };
-
-        function saveCurrentAnswer() {
-            const currentQuestion = questions[currentQuestionIndex];
-            const selectedAnswer = currentQuestion.querySelector('input[type="radio"]:checked');
-            console.log("111 "+currentQuestion.id.split('-')[1]+"     "+selectedAnswer.value);
-            const testProgressDTO = {
-                QuestionId: currentQuestion.id.split('-')[1],
-                AnswerId: selectedAnswer.value
-            };
-            if (selectedAnswer) {
-                fetch('/Test/SaveAnswer', {
+            try {
+                const response = await fetch('/Test/SaveAnswer', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(
-                        testProgressDTO
-                    )
+                    body: JSON.stringify({ questionId, answerId })
                 });
+                if (!response.ok) {
+                    throw new Error('Jogap ýatda saklanmady');
+                }
+            } catch (error) {
+                console.error('Jogap ýatda saklamakda ýalňyşlyk:', error);
+                throw error;
             }
         }
-                function updateNavigationButtons() {
+
+        
+
+        function handleSkipQuestion() {
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function updateAnsweredCount() {
+            const count = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = count;
+            updateNavigationButtons();
+        }
+
+                        function updateNavigationButtons() {
             const nextButton = document.getElementById('nextQuestion');
             const skipButton = document.getElementById('skipQuestion');
-            const finishButton = document.getElementById('finishTest');
+            const completeButton = document.getElementById('completeTest');
 
-            // If we're on the last question
             if (currentQuestionIndex === questions.length - 1) {
+                // Iň soňky soragda
                 nextButton.style.display = 'none';
                 skipButton.style.display = 'none';
-                finishButton.style.display = 'block';
+                completeButton.style.display = 'block';
             } else {
+                // Beýleki soraglarda
                 nextButton.style.display = 'block';
                 skipButton.style.display = 'block';
-                finishButton.style.display = 'none';
-            }
-
-            // Disable next button if no answer is selected for current question
-            const currentQuestion = questions[currentQuestionIndex];
-            const selectedAnswer = currentQuestion.querySelector('input[type="radio"]:checked');
-            nextButton.disabled = !selectedAnswer;
-
-            // Update progress indicator if you have one
-            updateProgressIndicator();
-        }
-
-        // Helper function to update progress indicator
-        function updateProgressIndicator() {
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-            const progressElement = document.querySelector('.progress-bar');
-            if (progressElement) {
-                progressElement.style.width = `${progress}%`;
-                progressElement.textContent = `${currentQuestionIndex + 1}/${questions.length} sorag`;
+                completeButton.style.display = 'none';
             }
         }
 
-        // Add event listener for radio button changes to enable/disable next button
-        document.querySelectorAll('.question input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', updateNavigationButtons);
-        });
-
-        async function finishTest() {
-            clearInterval(timer);
-                const testId = document.querySelector('.test-container').dataset.testId;
-                
+                       async function completeTest() {
             try {
-                const response = await fetch('/Test/FinishTest', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    testId
-                )
-            });
-            console.log(response);
-            const data =await response.json();
-            if (data.success) {
-                    window.location.href = data.redirectUrl;
+                // Save the last answer if selected
+                const selectedOption = document.querySelector('.answer-option.selected');
+                if (selectedOption) {
+                    const questionId = questions[currentQuestionIndex].id;
+                    const answerId = parseInt(selectedOption.dataset.answerId);
+                    await saveAnswer(questionId, answerId); // Wait for the answer to be saved
                 }
-            } catch(error){
-            console.error('Error:', error);
-            alert('Test tamamlamakda ýalňyşlyk ýüze çykdy');
-        };
+
+                clearInterval(timerInterval);
+                showLoadingMessage();
+
+                const response = await fetch('/Test/CompleteTest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log(response);
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = data.redirectUrl;
+                } else {
+                    throw new Error('Test tamamlanmady');
+                }
+            } catch (error) {
+                console.error('Ýalňyşlyk:', error);
+                alert('Test tamamlanmady. Täzeden synanyşyň.');
+            }
         }
-        // document.querySelector('[data-test-id]').dataset.testId
+
+        function showLoadingMessage() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading-message';
+            loadingDiv.innerHTML = `
+                <div class="spinner"></div>
+                <p>Netijäňiz hasaplanýar, haýyş edýäris garaşyň...</p>
+            `;
+            document.body.appendChild(loadingDiv);
+        }
     </script>
 }

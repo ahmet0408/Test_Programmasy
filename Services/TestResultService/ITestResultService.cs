@@ -8,7 +8,7 @@ namespace TestProgrammasy.Services.TestResultService
     {
         Task<TestResultDTO> GetTestResultByIdAsync(int id);
         Task<List<TestResultDTO>> GetAllTestResultsAsync();
-        //Task<List<TestResultDTO>> GetTeacherTestResultsAsync(string teacherId);
+        Task<List<TestResultDTO>> GetTeacherTestResultsAsync(string userId);
         Task<List<TestResultDTO>> GetStudentTestResultsAsync(string studentId);
         Task<TestResultDTO> GetTestResultWithDetailsAsync(int id);
         Task<TestAnalyticsViewModel> GetTestAnalyticsAsync();
