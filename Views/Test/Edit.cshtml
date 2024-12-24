@@ -8,6 +8,7 @@
     <div class="card-body">
         <form asp-action="Edit" method="post">
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
 
             <div class="row">
                 <input type="hidden" name="UserId" value=@User.FindFirstValue(ClaimTypes.NameIdentifier) />

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestProgrammasy.DTOs;
-using TestProgrammasy.Models;
 using TestProgrammasy.Services.PdfService;
 using TestProgrammasy.Services.TestResultService;
 using TestProgrammasy.Services.UserService;
@@ -42,7 +40,7 @@ public class TestResultController : Controller
     public async Task<IActionResult> List()
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var userRole = await _userService.GetUserRole(userId);     
+        var userRole = await _userService.GetUserRole(userId);
 
         var results = new List<TestResultDTO>();
 

@@ -26,26 +26,9 @@ namespace TestProgrammasy.Services.TestResultService
 
         public async Task<TestResultDTO> GetTestResultByIdAsync(int id)
         {
-            var result = await _dbContext.TestResults
-                .Include(tr => tr.User)
-                .FirstOrDefaultAsync(tr => tr.Id == id);
-
-            if (result == null) return null;
-
-            return new TestResultDTO
-            {
-                Id = result.Id,
-                TestId = result.TestId,
-                Name = result.Name,
-                UserId = result.UserId,
-                Score = result.Score,
-                //Subject = result.Subject,
-                TotalPoints = result.TotalPoints,
-                //EarnedPoints = result.EarnedPoints,
-                Percentage = result.Percentage,
-                Grade = result.Grade,
-                //CompletedDate = result.CompletedDate
-            };
+            var testResult = await _dbContext.TestResults.Include(tr => tr.User).Include(tr => tr.Test).FirstOrDefaultAsync(tr => tr.Id == id);
+            var result = _mapper.Map<TestResultDTO>(testResult);
+            return result;
         }
 
         public async Task<List<TestResultDTO>> GetAllTestResultsAsync()
@@ -100,29 +83,13 @@ namespace TestProgrammasy.Services.TestResultService
 
         public async Task<TestResultDTO> GetTestResultWithDetailsAsync(int id)
         {
-            var result = await _dbContext.TestResults
-                .Include(tr => tr.User)
-                .Include(tr => tr.Test)
+            var testResult = await _dbContext.TestResults.Include(tr => tr.User).Include(tr => tr.Test)
                     .ThenInclude(t => t.Questions)
                         .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(tr => tr.Id == id);
+            var result = _mapper.Map<TestResultDTO>(testResult);
 
-            if (result == null) return null;
-
-            return new TestResultDTO
-            {
-                Id = result.Id,
-                TestId = result.TestId,
-                Name = result.Name,
-                UserId = result.UserId,
-                Score = result.Score,
-                StudentName = await _userService.GetUserFullName(result.UserId),
-                Description = result.Description,
-                TotalPoints = result.TotalPoints,
-                Percentage = result.Percentage,
-                Grade = result.Grade,
-                CompletedAt = result.CompletedAt
-            };
+            return result;
         }
 
         public async Task<TestAnalyticsViewModel> GetTestAnalyticsAsync()

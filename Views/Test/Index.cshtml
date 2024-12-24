@@ -27,10 +27,13 @@
                 Testler
                 </h3>
             }
-        <a href="@Url.Action("Create")" class="btn btn-light">
+        @if (isAdmin || isTeacher)
+        {
+            <a href="@Url.Action("Create")" class="btn btn-light">
                 <i class="bi bi-plus-circle"></i> Täze test goşmak
             </a>
-        </div>
+        }
+    </div>
         <div class="card-body">
             <div class="table-responsive">
             <table class="table table-hover">

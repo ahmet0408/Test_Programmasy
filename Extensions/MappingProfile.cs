@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using System.Linq;
 using TestProgrammasy.DTOs;
 using TestProgrammasy.Models;
 
 namespace MyLibrary.Extensions
 {
-    public class MappingProfile: Profile
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
@@ -23,16 +22,9 @@ namespace MyLibrary.Extensions
 
             CreateMap<TestResultDTO, TestResult>();
             CreateMap<TestResult, TestResultDTO>()
-                .ForMember(p => p.StudentName, p => p.MapFrom(p => p.User.FirstName + " " + p.User.LastName));
-                
-
-            //CreateMap<CreateAboutDTO, About>();
-            //CreateMap<AboutTranslateDTO, AboutTranslate>().ReverseMap();
-            //CreateMap<EditAboutDTO, About>().ReverseMap();
-            //CreateMap<About, AboutDTO>()
-            //    .ForMember(p => p.Title, p => p.MapFrom(p => p.AboutTranslates.Select(p => p.Title).FirstOrDefault()))
-            //    .ForMember(p => p.Description, p => p.MapFrom(p => p.AboutTranslates.Select(p => p.Description).FirstOrDefault()));
-
+                .ForMember(p => p.StudentName, p => p.MapFrom(p => p.User.FirstName + " " + p.User.LastName))
+                .ForMember(p => p.StudentClass, p => p.MapFrom(p => p.User.Class))
+                .ForMember(p => p.Type, p => p.MapFrom(p => p.Test.Type));
         }
     }
 }

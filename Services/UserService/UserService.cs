@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestProgrammasy.Data;
@@ -32,14 +31,6 @@ namespace TestProgrammasy.Services.UserService
             var user = await _userManager.FindByIdAsync(userId);
             return user != null ? $"{user.FirstName} {user.LastName}" : null;
         }
-
-        //public async Task<List<string>> GetTeacherSubjects(string teacherId)
-        //{
-        //    return await _context.TeacherSubjects
-        //        .Where(ts => ts.TeacherId == teacherId)
-        //        .Select(ts => ts.Subject)
-        //        .ToListAsync();
-        //}
 
         public async Task<bool> IsTeacher(string userId)
         {

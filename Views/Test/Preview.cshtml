@@ -1,4 +1,4 @@
-﻿@model TestProgrammasy.DTOs.TestPreviewDTO
+﻿@model TestProgrammasy.DTOs.TestDTO
 
 <div class="preview-container">
     <div class="test-header">
@@ -6,19 +6,25 @@
         <div class="test-info">
             <div class="info-item">
                 <i class="fas fa-book"></i>
-                <span>Ugry: @Model.Description</span>
-            </div>
+                <span>Dersi: @Model.Type</span>
+            </div><br />            
             <div class="info-item">
                 <i class="fas fa-book"></i>
                 <span>Derejesi: @Model.Level</span>
             </div>
             <div class="info-item">
                 <i class="fas fa-question-circle"></i>
-                <span>Sorag sany: @Model.TotalQuestions</span>
+                <span>Sorag sany: @Model.Questions.Count</span>
             </div>
             <div class="info-item">
                 <i class="fas fa-star"></i>
                 <span>Jemi ball: @Model.Questions.Count</span>
+            </div>
+        </div>
+        <div class="test-info m-0">
+            <div class="info-item">
+                <i class="fas fa-book"></i>
+                <span>Giňişleýin: @Model.Description</span>
             </div>
         </div>
     </div>

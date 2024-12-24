@@ -13,31 +13,27 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
 
                     <div class="form-group">
-                        <label asp-for="UserName">Ulanyjy adyňyz!</label>
-                        <input asp-for="UserName" class="form-control" autocomplete="username" />
+                        <label asp-for="UserName">Ulanyjy adyňyz</label>
+                        <input asp-for="UserName" class="form-control" placeholder="Ulanyjy adyňyz" autocomplete="off" />
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Password">Parolyňyz</label>
-                        <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
+                        <label asp-for="Password">Açar sözüňiz</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Açar sözüňiz" autocomplete="off" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
+                    @* <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             <input asp-for="RememberMe" type="checkbox" class="custom-control-input" id="rememberMe">
                             <label class="custom-control-label" for="rememberMe">Meni ýatda sakla</label>
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">Giriş</button>
-                    </div>
-
-                    <div class="text-center">
-                        <a asp-action="ForgotPassword">Parolyňyzy unutdyňyzmy?</a>
-                    </div>
+                    </div>                    
 
                     <hr>
 

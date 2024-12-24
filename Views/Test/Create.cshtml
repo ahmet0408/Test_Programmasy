@@ -16,21 +16,51 @@
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label asp-for="Type" class="form-label">Dersi saýlaň</label>
+                        <select asp-for="Type" class="custom-select">
+                            <option value=""></option>
+                            <option value="Türkmen dili">Türkmen dili</option>
+                            <option value="Edebiýat">Edebiýat</option>
+                            <option value="Matematika">Matematika</option>
+                            <option value="Fizika">Fizika</option>
+                            <option value="Himiýa">Himiýa</option>
+                            <option value="Biologiýa">Biologiýa</option>
+                            <option value="Geografiýa">Geografiýa</option>
+                            <option value="Taryh">Taryh</option>
+                            <option value="Zähmet">Zähmet</option>
+                            <option value="Informatika">Informatika</option>
+                            <option value="Tehnologiýa">Tehnologiýa</option>
+                            <option value="Rus dili">Rus dili</option>
+                            <option value="Bedenterbiýe">Bedenterbiýe</option>
+                            <option value="Şekillendiriş sungaty">Şekillendiriş sungaty</option>
+                            <option value="Iňlis dili">Iňlis dili</option>
+                            <option value="Kommunikasiýa">Kommunikasiýa</option>
+                            <option value="Astronomiýa">Astronomiýa</option>
+                            <option value="Algebra">Algebra</option>
+                            <option value="Geometriýa">Geometriýa</option>
+                            <option value="Matematiki modelirleme">Matematiki modelirleme</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-5">
                     <div class="form-group mb-3">
                         <label asp-for="Description" class="form-label">Giňişleýin</label>
                         <input asp-for="Description" class="form-control" />
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                 </div>
+                
                 <div class="col-md-2">
                     <div class="form-group mb-3">
                         <label asp-for="Level" class="form-label">Derejesini saýlaň</label>
                         <select asp-for="Level" class="custom-select">
                             <option value=""></option>
-                            <option value="Ýeňil">Ýeňil</option>
+                            <option value="Ýönekeý">Ýönekeý</option>
                             <option value="Orta">Orta</option>
-                            <option value="Agyr">Agyr</option>
+                            <option value="Çylşyrymly">Çylşyrymly</option>
                         </select>
                         <span asp-validation-for="Level" class="text-danger"></span>
                     </div>
@@ -47,15 +77,6 @@
             <div id="questions-container">
                 <!-- Questions will be added here dynamically -->
             </div>
-
-            @* <div class="mt-3">
-                <button type="button" class="btn btn-secondary" onclick="addQuestion()">
-                    <i class="bi bi-plus-circle"></i> Sorag goş
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Testi atda sakla
-                </button>
-            </div> *@
 
             <button type="button"
                     class="btn btn-secondary"

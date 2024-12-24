@@ -86,7 +86,7 @@ namespace TestProgrammasy.Services.PdfService
 
             tempY = yPosition - 20;
             // Ikinji sütün
-            DrawInfoField(gfx, "Synpy:", "9-njy synp", normalFont, valueFont,
+            DrawInfoField(gfx, "Synpy:", result.StudentClass.ToString()+"-njy(i) synp", normalFont, valueFont,
                 textColor, leftMargin + columnWidth, ref tempY);
 
             // Birinji sütün
@@ -95,11 +95,11 @@ namespace TestProgrammasy.Services.PdfService
 
             tempY = yPosition - 20;
             // Ikinji sütün
-            DrawInfoField(gfx, "Dersi:", result.Name, normalFont, valueFont,
+            DrawInfoField(gfx, "Dersi:", result.Type, normalFont, valueFont,
                 textColor, leftMargin + columnWidth, ref tempY);
 
             // Birinji sütün
-            DrawInfoField(gfx, "Sene:", result.CompletedAt.ToString("dd.MM.yyyy"), normalFont, valueFont,
+            DrawInfoField(gfx, "Tabşyran senesi:", result.CompletedAt.ToString("dd.MM.yyyy"), normalFont, valueFont,
                 textColor, leftMargin, ref yPosition);
 
             tempY = yPosition - 20;
