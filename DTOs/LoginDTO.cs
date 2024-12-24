@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace TestProgrammasy.DTOs
 {
@@ -8,7 +9,6 @@ namespace TestProgrammasy.DTOs
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Paroly girizmegiňiz zerur")]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Display(Name = "Meni ýatda sakla")]

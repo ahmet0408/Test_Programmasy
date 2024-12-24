@@ -17,6 +17,7 @@ namespace TestProgrammasy.Services.PdfService
 
             // Fontlar
             var titleFont = new XFont("Times New Roman", 24, XFontStyleEx.Bold);
+            var titleFont1 = new XFont("Times New Roman", 22, XFontStyleEx.Bold);
             var headerFont = new XFont("Times New Roman", 16, XFontStyleEx.Bold);
             var normalFont = new XFont("Times New Roman", 12);
             var valueFont = new XFont("Times New Roman", 12, XFontStyleEx.Bold);
@@ -27,7 +28,7 @@ namespace TestProgrammasy.Services.PdfService
             var lineColor = new XPen(XColors.DarkBlue, 1);
 
             // Logo we umumy dizaýn
-            DrawHeader(gfx, result, titleFont, headerColor);
+            DrawHeader(gfx, result, titleFont, titleFont1, headerColor);
             DrawDecorationLines(gfx, lineColor, page.Width);
 
             // Umumy maglumat
@@ -45,19 +46,20 @@ namespace TestProgrammasy.Services.PdfService
             return ms.ToArray();
         }
 
-        private void DrawHeader(XGraphics gfx, TestResultDTO result, XFont titleFont, XBrush headerColor)
+        private void DrawHeader(XGraphics gfx, TestResultDTO result, XFont titleFont, XFont titleFont1, XBrush headerColor)
         {
             // Logo çyzmak üçin (üýtgedip bilersiňiz)
             var logo = XImage.FromFile("wwwroot/images/school_logo.png");
-            gfx.DrawImage(logo, 50, 20, 60, 60);
+            gfx.DrawImage(logo, 50, 20, 80, 75);
 
             // Mekdebiň ady
-            gfx.DrawString("Baýramaly şäheriniň 4-nji orta mekdebi", titleFont, headerColor,
+            gfx.DrawString("Baýramaly şäherindäki tebigy ugurlara", titleFont1, headerColor,
                 new XRect(150, 20, 400, 30), XStringFormats.CenterLeft);
-
+            gfx.DrawString("ýöriteleşdirilen 4-nji orta mekdebi", titleFont1, headerColor,
+                new XRect(150, 42, 400, 30), XStringFormats.CenterLeft);
             // Test netijesi ady
-            gfx.DrawString("Test Netijesi we Hasabaty", titleFont, headerColor,
-                new XRect(150, 50, 400, 30), XStringFormats.CenterLeft);
+            gfx.DrawString("Test netijesi we hasabaty", titleFont, headerColor,
+                new XRect(150, 72, 400, 30), XStringFormats.CenterLeft);
         }
 
         private void DrawDecorationLines(XGraphics gfx, XPen lineColor, double pageWidth)
