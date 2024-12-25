@@ -53,9 +53,32 @@
         background-color: #f8f9fa;
         padding: 1rem 0;
         }
+
+         html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        flex: 1 0 auto;
+    }
+
+    .footer {
+        flex-shrink: 0;
+        background-color: #f8f9fa;
+        padding: 1rem 0;
+        width: 100%;
+        margin-top: auto;
+    }
     </style>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
     @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
     @{
         var tokens = Antiforgery.GetAndStoreTokens(Context);
@@ -109,13 +132,13 @@
         </nav>
     </header>
 
-    <div class="container" >
+    <div class="container" style="flex: 1 0 auto;">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted" style="flex-shrink: 0;">
         <div class="container">
             &copy; 2024 - Mekdep Test Ulgamy
         </div>

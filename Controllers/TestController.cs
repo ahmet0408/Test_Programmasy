@@ -166,12 +166,12 @@ namespace TestProgrammasy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompleteTest()
+        public async Task<IActionResult> CompleteTest([FromBody] int remainingTime)
         {
             var progressJson = HttpContext.Session.GetString("TestProgress");
             var progress = System.Text.Json.JsonSerializer.Deserialize<TestProgressDTO>(progressJson);
 
-            var result = await _testService.CalculateTestResult(progress);
+            var result = await _testService.CalculateTestResult(progress, remainingTime);
 
             HttpContext.Session.Remove("TestProgress");
 

@@ -104,7 +104,7 @@ namespace TestProgrammasy.Services.PdfService
 
             tempY = yPosition - 20;
             // Ikinji sütün
-            DrawInfoField(gfx, "Wagty:", result.CompletedAt.ToString("HH:mm"), normalFont, valueFont,
+            DrawInfoField(gfx, "Sarp eden wagty:", result.TimeSpent / 60 +"."+result.TimeSpent % 60+" min", normalFont, valueFont,
                 textColor, leftMargin + columnWidth, ref tempY);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace TestProgrammasy.DTOs
 {
@@ -9,6 +10,8 @@ namespace TestProgrammasy.DTOs
         public string Name { get; set; }
         public string Type { get; set; }
         public int StudentClass { get; set; }
+        public int TimeSpent { get; set; }
+        public DateTime StartDate { get; set; }
         public string UserId { get; set; }
         public string StudentName { get; set; }
         public int TestId { get; set; }

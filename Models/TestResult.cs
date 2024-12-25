@@ -9,6 +9,7 @@ namespace TestProgrammasy.Models
         public string UserId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int TimeSpent { get; set; }
         public ApplicationUser User { get; set; }
         public int TestId { get; set; }
         public Test Test { get; set; }

@@ -182,6 +182,11 @@
         }
 
         }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
     </style>
 
 
@@ -197,20 +202,26 @@
         let questions = @Html.Raw(Json.Serialize(Model.Questions));
         let answers = {};
         let timerInterval;
+        let remainingTime = 0; // Add this as a global variable
+        let skippedQuestions = []; // Add this new array
+
+
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('confirmationModal').style.display = 'block';
 
-            const timerElement = document.getElementById('timer');
-            if (timerElement) {
-                const timeLimit = parseInt(timerElement.dataset.time) * 60;
-                startTimer(timeLimit);
-            }
+            
 
             document.getElementById('confirmStart').addEventListener('click', function() {
                 document.getElementById('confirmationModal').style.display = 'none';
                 document.getElementById('testContent').style.display = 'block';
-                loadQuestion(currentQuestionIndex);
+                  // Start timer only after confirmation
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            const timeLimit = parseInt(timerElement.dataset.time) * 60;
+            startTimer(timeLimit);
+        }
+        loadQuestion(currentQuestionIndex);
             });
 
             document.getElementById('cancelStart').addEventListener('click', function() {
@@ -221,6 +232,7 @@
             document.getElementById('skipQuestion').addEventListener('click', handleSkipQuestion);
             document.getElementById('completeTest').addEventListener('click', completeTest);
         });
+               
 
         function startTimer(timeLimit) {
             let timeLeft = timeLimit;
@@ -229,6 +241,7 @@
             function updateTimer() {
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
+                remainingTime = timeLeft; 
                 timerElement.textContent = `Galan wagt: ${minutes}:${seconds.toString().padStart(2, '0')}`;
             }
 
@@ -247,39 +260,45 @@
                 function loadQuestion(index) {
             const question = questions[index];
             const questionContainer = document.getElementById('currentQuestion');
+                const nextButton = document.getElementById('nextQuestion');
 
-            questionContainer.innerHTML = `
-                <h3>Sorag ${index + 1}</h3>
-                <p>${question.questionText}</p>
-                <div class="answers">
-                    ${question.answers.map(answer => `
-                        <div class="answer-option ${answers[question.id] === answer.id ? 'selected' : ''}"
-                             data-answer-id="${answer.id}">
-                            ${answer.answerText}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
+                    // Initially disable the next button
+        nextButton.disabled = !answers[question.id];
 
-            document.querySelectorAll('.answer-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const isSelected = this.classList.contains('selected');
-                    document.querySelectorAll('.answer-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
+                questionContainer.innerHTML = `
+            <h3>Sorag ${index + 1}</h3>
+            <p>${question.questionText}</p>
+            <div class="answers">
+                ${question.answers.map(answer => `
+                    <div class="answer-option ${answers[question.id] === answer.id ? 'selected' : ''}"
+                         data-answer-id="${answer.id}">
+                        ${answer.answerText}
+                    </div>
+                `).join('')}
+            </div>
+        `;
 
-                    if (!isSelected) {
-                        this.classList.add('selected');
-                        answers[question.id] = parseInt(this.dataset.answerId);
-                        updateAnsweredCount();
-                    } else {
-                        delete answers[question.id];
-                        updateAnsweredCount();
-                    }
+                document.querySelectorAll('.answer-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const isSelected = this.classList.contains('selected');
+                document.querySelectorAll('.answer-option').forEach(opt => {
+                    opt.classList.remove('selected');
                 });
-            });
 
-            updateNavigationButtons();
+                if (!isSelected) {
+                    this.classList.add('selected');
+                    answers[question.id] = parseInt(this.dataset.answerId);
+                    nextButton.disabled = false; // Enable next button when answer is selected
+                    updateAnsweredCount();
+                } else {
+                    delete answers[question.id];
+                    nextButton.disabled = true; // Disable next button when answer is deselected
+                    updateAnsweredCount();
+                }
+            });
+        });
+
+        updateNavigationButtons();
         }
 
         function handleNextQuestion() {
@@ -316,31 +335,76 @@
             }
         }
 
-        
 
-        function handleSkipQuestion() {
-            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
-            loadQuestion(currentQuestionIndex);
+
+                function handleSkipQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+
+                   // Diňe bökülen soraglary ýatda sakla
+        if (!skippedQuestions.includes(currentQuestion)) {
+            skippedQuestions.push(currentQuestion);
+            questions.splice(currentQuestionIndex, 1); // Häzirki soragy aýyr
+
+            // Eger öň jogaplanan bolsa, jogaby sakla
+            if (answers[currentQuestion.id]) {
+                delete answers[currentQuestion.id]; // Jogaby aýyr
+                updateAnsweredCount(); // Counter-i täzele
+            }
         }
 
-        function updateAnsweredCount() {
+            // If we've reached the end of regular questions, start showing skipped ones
+            if (currentQuestionIndex >= questions.length && skippedQuestions.length > 0) {
+                questions = questions.concat(skippedQuestions);
+                skippedQuestions = [];
+            }
+
+            // If we still have questions to show
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+                function updateAnsweredCount() {
             const count = Object.keys(answers).length;
+            const totalQuestions = questions.length + skippedQuestions.length;
             document.getElementById('answeredCount').textContent = count;
+
+            // Only show complete button if all questions are answered
+            const completeButton = document.getElementById('completeTest');
+            if (count === totalQuestions) {
+                completeButton.style.display = 'block';
+            } else {
+                completeButton.style.display = 'none';
+            }
+
             updateNavigationButtons();
         }
 
-                        function updateNavigationButtons() {
+                   function updateNavigationButtons() {
             const nextButton = document.getElementById('nextQuestion');
             const skipButton = document.getElementById('skipQuestion');
             const completeButton = document.getElementById('completeTest');
 
+            // Get total number of questions including skipped ones
+            const totalQuestions = questions.length + skippedQuestions.length;
+            // Get number of answered questions
+            const answeredQuestions = Object.keys(answers).length;
+
             if (currentQuestionIndex === questions.length - 1) {
-                // Iň soňky soragda
-                nextButton.style.display = 'none';
-                skipButton.style.display = 'none';
-                completeButton.style.display = 'block';
+                // Last question
+                if (answeredQuestions === totalQuestions) {
+                    // All questions are answered
+                    nextButton.style.display = 'none';
+                    skipButton.style.display = 'none';
+                    completeButton.style.display = 'block';
+                } else {
+                    // Not all questions are answered yet
+                    nextButton.style.display = 'block';
+                    skipButton.style.display = 'block';
+                    completeButton.style.display = 'none';
+                }
             } else {
-                // Beýleki soraglarda
+                // Not the last question
                 nextButton.style.display = 'block';
                 skipButton.style.display = 'block';
                 completeButton.style.display = 'none';
@@ -364,9 +428,11 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify(
+                         remainingTime
+                 )
                 });
-                console.log(response);
                 if (response.ok) {
                     const data = await response.json();
                     window.location.href = data.redirectUrl;

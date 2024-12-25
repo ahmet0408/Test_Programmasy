@@ -16,6 +16,6 @@ namespace TestProgrammasy.Services.TestService
         Task<TestDTO> GetTestForPreviewById(int id);
         IEnumerable<TestDTO> GetTestListByUserId(string userId);
         List<TestDTO> GetTestList();
-        Task<TestResultDTO> CalculateTestResult(TestProgressDTO progress);
+        Task<TestResultDTO> CalculateTestResult(TestProgressDTO progress, int remainingTime);
     }
 }

@@ -1,69 +1,96 @@
-﻿@model TestProgrammasy.DTOs.TestResultDTO
+﻿@using TestProgrammasy.DTOs
+@model TestProgrammasy.DTOs.TestResultDTO
 
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h3>Test Netijesi: @Model.Name</h3>
             <div>
-                <a href="@Url.Action("List")" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Yza
+                <a href="@Url.Action("List")" class="btn btn-light">
+                    <i class="bi bi-arrow-left"></i> Yza
                 </a>
-                <a href="@Url.Action("ExportPdf", new { id = Model.Id })"
-                   class="btn btn-primary">
-                    <i class="fas fa-file-pdf"></i> PDF Export
+                <a href="@Url.Action("ExportPdf", new { id = Model.Id })" class="btn btn-light">
+                    <i class="bi bi-file-pdf"></i> PDF Export
                 </a>
             </div>
         </div>
+
         <div class="card-body">
-            <div class="row">
+            <!-- Umumy maglumat we statistika -->
+            <div class="row mb-4">
                 <div class="col-md-6">
-                    <h4>Umumy Maglumat</h4>
-                    <table class="table">
-                        <tr>
-                            <th>Okuwçy:</th>
-                            <td>@Model.StudentName</td>
-                        </tr>
-                        <tr>
-                            <th>Test:</th>
-                            <td>@Model.Name</td>
-                        </tr>
-                        <tr>
-                            <th>Dersi:</th>
-                            <td>@Model.Type</td>
-                        </tr>
-                        <tr>
-                            <th>Sene:</th>
-                            <td>@Model.CompletedAt.ToString("dd.MM.yyyy HH:mm")</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h4>Netije</h4>
-                    <div class="result-summary">
-                        <div class="progress mb-3" style="height: 25px;">
-                            <div class="progress-bar" role="progressbar"
-                                 style="width: @Model.Percentage%">
-                                @Model.Percentage%
-                            </div>
-                        </div>
+                    <div class="info-card">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-person-circle"></i> Umumy Maglumat
+                        </h5>
                         <table class="table">
                             <tr>
-                                <th>Ball:</th>
-                                <td>@Model.Score / @Model.TotalPoints</td>
+                                <th>Okuwçy:</th>
+                                <td>@Model.StudentName</td>
                             </tr>
                             <tr>
-                                <th>Göterim:</th>
-                                <td>@Model.Percentage%</td>
+                                <th>Synpy:</th>
+                                <td>@Model.StudentClass</td>
                             </tr>
                             <tr>
-                                <th>Baha:</th>
-                                <td>
-                                    <span class="badge badge-@GetGradeClass(Model.Grade)">
-                                        @Model.Grade
-                                    </span>
-                                </td>
+                                <th>Test ady:</th>
+                                <td>@Model.Name</td>
+                            </tr>
+                            <tr>
+                                <th>Dersi:</th>
+                                <td>@Model.Type</td>
+                            </tr>
+                            <tr>
+                                <th>Sene:</th>
+                                <td>@Model.CompletedAt.ToString("dd.MM.yyyy HH:mm")</td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="result-card">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-graph-up"></i> Netije
+                        </h5>
+                        <div class="text-center mb-4">
+                            <div class="progress-circle"
+                                 data-value="@Model.Percentage"
+                                 data-size="150"
+                                 data-thickness="6">
+                                <span class="progress-circle-value">@Model.Percentage%</span>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6 col-md-3">
+                                <div class="stat-box correct">
+                                    <i class="bi bi-check-circle"></i>
+                                    <div class="stat-value">@Model.Score</div>
+                                    <div class="stat-label">Dogry</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-box wrong">
+                                    <i class="bi bi-x-circle"></i>
+                                    <div class="stat-value">@(Model.TotalPoints - Model.Score)</div>
+                                    <div class="stat-label">Ýalňyş</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-box points">
+                                    <i class="bi bi-star"></i>
+                                    <div class="stat-value">@Model.Score</div>
+                                    <div class="stat-label">Bal</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-box grade">
+                                    <i class="bi bi-award"></i>
+                                    <div class="stat-value grade-@Model.Grade.ToLower()">@Model.Grade</div>
+                                    <div class="stat-label">Baha</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,69 +99,158 @@
 </div>
 
 <style>
-    .result-summary {
+    .info-card, .result-card {
+        background: #fff;
         padding: 20px;
-        background-color: #f8f9fa;
         border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .progress {
-        height: 25px;
-        background-color: #e9ecef;
+    .progress-circle {
+        position: relative;
+        display: inline-block;
     }
 
-    .progress-bar {
+    .progress-circle-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .stat-box {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+        .stat-box i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stat-box.correct {
+            background-color: #d4edda;
+        }
+
+        .stat-box.wrong {
+            background-color: #f8d7da;
+        }
+
+        .stat-box.points {
+            background-color: #fff3cd;
+        }
+
+        .stat-box.grade {
+            background-color: #e2e3e5;
+        }
+
+    .grade-a {
+        color: #28a745;
+    }
+
+    .grade-b {
+        color: #17a2b8;
+    }
+
+    .grade-c {
+        color: #ffc107;
+    }
+
+    .grade-d {
+        color: #dc3545;
+    }
+
+    .question-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .question-card.correct {
+            border-left: 4px solid #28a745;
+        }
+
+        .question-card.incorrect {
+            border-left: 4px solid #dc3545;
+        }
+
+    .question-header {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .question-body {
+        padding: 15px;
+    }
+
+    .answer-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 4px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
+        gap: 10px;
     }
 
-    .badge {
-        font-size: 1rem;
-        padding: 8px 16px;
-    }
+        .answer-item.selected-correct {
+            background-color: #d4edda;
+            border: 1px solid #28a745;
+        }
 
-    .badge-success {
-        background-color: #28a745;
-    }
+        .answer-item.selected-incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #dc3545;
+        }
 
-    .badge-info {
-        background-color: #17a2b8;
-    }
-
-    .badge-warning {
-        background-color: #ffc107;
-    }
-
-    .badge-danger {
-        background-color: #dc3545;
-    }
-
-    .badge-secondary {
-        background-color: #6c757d;
-    }
-
-    .table-responsive {
-        margin-top: 20px;
-    }
-
-    .btn-sm {
-        margin: 0 2px;
-    }
+        .answer-item.correct {
+            background-color: #e8f5e9;
+        }
 </style>
 
-@functions {
-    string GetGradeClass(string grade)
-    {
-        return grade switch
-        {
-            "A" => "success",
-            "B" => "info",
-            "C" => "warning",
-            "D" => "secondary",
-            _ => "danger"
-        };
-    }
+
+@section Scripts {
+    <script>
+        // Progress circle animation
+        document.querySelectorAll('.progress-circle').forEach(function(circle) {
+            var value = circle.getAttribute('data-value');
+            var size = circle.getAttribute('data-size');
+            var thickness = circle.getAttribute('data-thickness');
+
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+
+            var radius = size / 2 - thickness / 2;
+            var circumference = 2 * Math.PI * radius;
+            var dashOffset = circumference * (1 - value / 100);
+
+            circle.innerHTML = `
+                <svg width="${size}" height="${size}">
+                    <circle
+                        cx="${size/2}"
+                        cy="${size/2}"
+                        r="${radius}"
+                        fill="none"
+                        stroke="#e9ecef"
+                        stroke-width="${thickness}"
+                    ></circle>
+                    <circle
+                        cx="${size/2}"
+                        cy="${size/2}"
+                        r="${radius}"
+                        fill="none"
+                        stroke="#28a745"
+                        stroke-width="${thickness}"
+                        stroke-dasharray="${circumference}"
+                        stroke-dashoffset="${dashOffset}"
+                        transform="rotate(-90 ${size/2} ${size/2})"
+                    ></circle>
+                </svg>
+                <span class="progress-circle-value">${value}%</span>
+            `;
+        });
+    </script>
 }

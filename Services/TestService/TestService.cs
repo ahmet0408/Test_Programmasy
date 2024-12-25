@@ -111,7 +111,7 @@ namespace TestProgrammasy.Services.TestService
             return null;                
         }
 
-        public async Task<TestResultDTO> CalculateTestResult(TestProgressDTO progress)
+        public async Task<TestResultDTO> CalculateTestResult(TestProgressDTO progress, int remainingTime)
         {
             // Testi almak
             var test = _dbContext.Tests
@@ -141,7 +141,7 @@ namespace TestProgrammasy.Services.TestService
             // Netijäni hasaplamak
             double percentage = (double)earnedPoints / totalPoints * 100;
             string grade = CalculateGrade(percentage);
-
+            int spentTime = (remainingTime >= 0) ? test.TimeLimit *60 - remainingTime : 0;
             // TestResult döretmek we ýatda saklamak
             var result = new TestResultDTO
             {
@@ -153,7 +153,8 @@ namespace TestProgrammasy.Services.TestService
                 Percentage = Math.Round(percentage, 2),
                 Grade = grade,
                 CompletedAt = DateTime.Now,
-                //Level = test.Level // ýa-da başga bir field
+                StartDate = progress.StartDate,
+                TimeSpent = spentTime
             };
 
             var testResult = await CreateTestResult(result);
@@ -176,11 +177,10 @@ namespace TestProgrammasy.Services.TestService
 
         private string CalculateGrade(double percentage)
         {
-            if (percentage >= 90) return "A";
-            if (percentage >= 80) return "B";
-            if (percentage >= 70) return "C";
-            if (percentage >= 60) return "D";
-            return "F";
+            if (percentage >= 90) return "5";
+            if (percentage >= 70) return "4";
+            if (percentage >= 50) return "3";
+            return "2";
         }
 
     }
