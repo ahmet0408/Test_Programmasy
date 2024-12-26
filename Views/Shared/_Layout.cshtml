@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Mekdep Test Ulgamy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" /> 
+    <link rel="stylesheet" href="~/css/site.css" />
+    @await RenderSectionAsync("Styles", required: false)
+
     <style>
         /* Custom styling */
         .navbar {
@@ -76,6 +78,16 @@
         width: 100%;
         margin-top: auto;
     }
+ 
+     body
+
+        {
+            background-image: url('/images/fon.webp');
+            background-size: cover; /* Fills the container */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeat */
+        }
+
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
@@ -85,64 +97,72 @@
     }
     <input type="hidden" name="__RequestVerificationToken"
     value="@tokens.RequestToken" />
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Mekdep Test Ulgamy</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş sahypa</a>
-                        </li>
-                        @if (User.IsInRole("Student") && !User.IsInRole("Admin"))
-                        {
+    @if (User.Identity.IsAuthenticated)
+    {
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">Mekdep Test Ulgamy</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş sahypa</a>
                             </li>
-                        }
-                        @if (User.IsInRole("Teacher") && !User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Test" asp-action="TestByUser" asp-route-userId=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Testlerim</a>
-                            </li>
-                        }
+                            @if (User.IsInRole("Student") && !User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Teacher") && !User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="TestByUser" asp-route-userId=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Testlerim</a>
+                                </li>
+                            }
 
-                        @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Test" asp-action="Create">Täze_Test_Goşmak</a>
-                        </li>  *@
-                        @if (User.IsInRole("Admin")) 
-                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="UserRoles" asp-action="Index">Ulanyjylar</a>
+                                </li>
+                            }                        
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="UserRoles" asp-action="Index">Ulanyjylar</a>
-                            </li>
-                        }                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="TestResult" asp-action="List">Netijeler</a>
-                        </li>                        
-                    </ul>
-                    <partial name="_LoginPartial" />
+                                <a class="nav-link text-dark" asp-controller="TestResult" asp-action="List">Netijeler</a>
+                            </li>                        
+                        </ul>
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
 
-    <div class="container" style="flex: 1 0 auto;">
-        <main role="main" class="pb-3">
+        <div class="container" style="flex: 1 0 auto;">
+            <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
-
-    <footer class="border-top footer text-muted" style="flex-shrink: 0;">
-        <div class="container">
-            &copy; 2024 - Mekdep Test Ulgamy
         </div>
-    </footer>
+        <footer class="border-top footer text-muted" style="flex-shrink: 0;">
+            <div class="container">
+                &copy; 2024 - Mekdep Test Ulgamy
+            </div>
+        </footer>
+    } else
+    {
+        <div  class="container  " >
+            <main role="main" >
+                @RenderBody()
+            </main>
+        </div>        
+    }
+
+    
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

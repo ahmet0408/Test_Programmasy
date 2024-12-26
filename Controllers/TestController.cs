@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using TestProgrammasy.Services.UserService;
 
 namespace TestProgrammasy.Controllers
 {
+    [Authorize]
     public class TestController : Controller
     {
         private readonly ITestService _testService;
@@ -37,7 +39,6 @@ namespace TestProgrammasy.Controllers
             }
             return View("Index", test);
         }
-
         public IActionResult Create()
         {
             return View();

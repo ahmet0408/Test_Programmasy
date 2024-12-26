@@ -1,8 +1,8 @@
 ﻿@model TestProgrammasy.DTOs.RegisterDTO
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
+    <div class="col-md-5">
+        <div class="card" style="margin-top: 10px">
             <div class="card-body">
                 <h2 class="card-title text-center">Hasap Döret</h2>
                 <form asp-action="Register" method="post">                   
@@ -33,13 +33,49 @@
                         <label asp-for="Password">Açar sözüňiz</label>
                         <input asp-for="Password" class="form-control" autocomplete="off" placeholder="Açar sözüňiz" type="password" />
                         <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>                
-                    <button type="submit" class="btn btn-primary btn-block">Hasap Döret</button>
+                    </div>    
+                    <div class="form-group">
+                       <button type="submit" class="btn btn-primary btn-block">Hasap Döret</button>
+                       </div>
+                       <hr />
+                    <div class="text-center">
+                        <p class="mb-0">Hasabyňyz barmy?</p>
+                        <a asp-action="Login" class="btn btn-link p-0">Ulgama gir</a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/custom.css" />
+
+    <style>
+        /* Register sahypasy üçin */
+        .register-card {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .register-form select {
+            height: 45px;
+            border-radius: 8px;
+        }
+
+        #classField {
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+            #classField.hidden {
+                opacity: 0;
+                height: 0;
+                margin: 0;
+                padding: 0;
+            }
+    </style>
+}
 @section Scripts{
     <script>
         document.getElementById("rol").addEventListener("change", function () {
