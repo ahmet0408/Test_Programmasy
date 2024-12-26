@@ -2,7 +2,7 @@
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card" style="margin-top: 10px">
+        <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center">Hasap Döret</h2>
                 <form asp-action="Register" method="post">                   
@@ -40,7 +40,7 @@
                        <hr />
                     <div class="text-center">
                         <p class="mb-0">Hasabyňyz barmy?</p>
-                        <a asp-action="Login" class="btn btn-link p-0">Ulgama gir</a>
+                        <a asp-action="Login" class="btn btn-link p-0">Ulgama gir!</a>
                     </div>
                 </form>
             </div>
@@ -52,6 +52,29 @@
     <link rel="stylesheet" href="~/css/custom.css" />
 
     <style>
+        /* Kartyň merkezde durmagy üçin */
+        .row.justify-content-center {
+            min-height: 100vh;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Kartyň ýokarky boşlugy aýrylýar sebäbi row-da center edilen */
+        .card {
+            margin-top: 0 !important;
+        }
+
+        /* Giriş düwmesi üçin reňk */
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #357abd;
+                border-color: #357abd;
+            }
         /* Register sahypasy üçin */
         .register-card {
             max-width: 500px;

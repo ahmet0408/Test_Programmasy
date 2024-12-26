@@ -10,20 +10,77 @@
     @await RenderSectionAsync("Styles", required: false)
 
     <style>
-        /* Custom styling */
         .navbar {
-        background-color: #f8f9fa;
-        box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        }
-
-        .navbar-brand {
-        font-weight: bold;
-        color: #007bff !important;
+            background-color: rgba(255, 255, 255, 0.5);  
+            backdrop-filter: blur(10px); /* fony biraz bulanyk edýär */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border: none;
         }
 
         .nav-link {
-        font-weight: 500;
+            color: #333 !important; /* ýazgylar has gowy görünmegi üçin */
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
+
+            .nav-link:hover {
+                color: #007bff !important;
+            }
+
+            .nav-link.active {
+                color: #007bff !important;
+                background-color: rgba(0, 123, 255, 0.1);
+                border-radius: 5px;
+                position: relative;
+            }
+
+                .nav-link.active::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 80%;
+                    height: 2px;
+                    background-color: #007bff;
+                }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            margin-right: 2rem;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+            .navbar-brand img {
+                height: 60px;
+                filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .navbar-brand:hover img {
+                filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15));
+                transform: translateY(-2px) scale(1.02);
+            }
+
+            .navbar-brand::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(33, 150, 243, 0.1), rgba(76, 175, 80, 0.1) );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            .navbar-brand:hover::before {
+                opacity: 1;
+            }
 
         .btn-primary {
         background-color: #007bff;
@@ -52,8 +109,16 @@
         }
 
         .footer {
-        background-color: #f8f9fa;
-        padding: 1rem 0;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 0;
+            color: #333;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            padding: 1rem 0;
+            width: 100%;
+            margin-top: auto;
         }
 
          html, body {
@@ -62,35 +127,24 @@
     }
 
     body {
+        margin: 0;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+            background-image: url('/images/fon1.webp');
+            background-size: cover; /* Fills the container */
+            background-position: center; /* Center the image */
+            background-repeat: repeat;
     }
 
     .container {
         flex: 1 0 auto;
     }
 
-    .footer {
-        flex-shrink: 0;
-        background-color: #f8f9fa;
-        padding: 1rem 0;
-        width: 100%;
-        margin-top: auto;
-    }
- 
-     body
-
-        {
-            background-image: url('/images/fon.webp');
-            background-size: cover; /* Fills the container */
-            background-position: center; /* Center the image */
-            background-repeat: no-repeat; /* Prevent repeat */
-        }
 
     </style>
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
+<body>
     @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
     @{
         var tokens = Antiforgery.GetAndStoreTokens(Context);
@@ -100,41 +154,53 @@
     @if (User.Identity.IsAuthenticated)
     {
         <header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
                 <div class="container">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">Mekdep Test Ulgamy</a>
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img src="~/images/Logo.svg" alt="Mekdep Test" height="40" /></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Baş sahypa</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" &&
+                                             ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Index">Baş sahypa</a>
                             </li>
+
                             @if (User.IsInRole("Student") && !User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Test" &&
+                                            ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                                       asp-controller="Test" asp-action="Index">Testler</a>
                                 </li>
                             }
+
                             @if (User.IsInRole("Teacher") && !User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="TestByUser" asp-route-userId=@User.FindFirstValue(ClaimTypes.NameIdentifier)>Testlerim</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Test" &&
+                                              ViewContext.RouteData.Values["Action"].ToString() == "TestByUser" ? "active" : "")"
+                                       asp-controller="Test" asp-action="TestByUser"
+                                       asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Testlerim</a>
                                 </li>
                             }
 
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Test" asp-action="Index">Testler</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Test" &&
+                                         ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Test" asp-action="Index">Testler</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="UserRoles" asp-action="Index">Ulanyjylar</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "UserRoles" &&
+                                                    ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="UserRoles" asp-action="Index">Ulanyjylar</a>
                                 </li>
                             }                        
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="TestResult" asp-action="List">Netijeler</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "TestResult" &&
+                                                    ViewContext.RouteData.Values["Action"].ToString() == "List" ? "active" : "")" asp-controller="TestResult" asp-action="List">Netijeler</a>
                             </li>                        
                         </ul>
                         <partial name="_LoginPartial" />
@@ -144,7 +210,7 @@
         </header>
 
         <div class="container" style="flex: 1 0 auto;">
-            <main role="main" class="pb-3">
+            <main role="main" >
             @RenderBody()
         </main>
         </div>

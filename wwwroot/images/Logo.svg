@@ -1,0 +1,126 @@
+﻿<svg width="160" height="80" viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Dogry nyşany animasiýasy -->
+        <path id="checkPath" 
+              d="M52 40 L62 50 L78 34"
+              fill="none"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round">
+            <animate attributeName="stroke-dasharray" 
+                     from="0,100" to="100,0"
+                     dur="2.5s"
+                     repeatCount="indefinite"/>
+        </path>
+        
+        <!-- Ýagtylyk effekti -->
+        <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0)">
+                <animate attributeName="offset" values="0;1" dur="2s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.3)">
+                <animate attributeName="offset" values="0;1" dur="2s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)">
+                <animate attributeName="offset" values="0;1" dur="2s" repeatCount="indefinite"/>
+            </stop>
+        </linearGradient>
+
+        <!-- Gradientler -->
+        <radialGradient id="bgGradient" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#E3F2FD"/>
+            <stop offset="70%" stop-color="#BBDEFB"/>
+            <stop offset="100%" stop-color="#90CAF9"/>
+        </radialGradient>
+
+        <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1E88E5"/>
+            <stop offset="100%" stop-color="#1565C0"/>
+        </linearGradient>
+        
+        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#43A047"/>
+            <stop offset="100%" stop-color="#2E7D32"/>
+        </linearGradient>
+
+        <linearGradient id="pencilGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFB300"/>
+            <stop offset="100%" stop-color="#FF8F00"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Arka fon elementleri -->
+    <rect x="0" y="0" width="160" height="80" fill="url(#bgGradient)" rx="15"/>
+    
+    <!-- Dekoratiw daireler -->
+    <circle cx="20" cy="15" r="25" fill="#2196F3" opacity="0.1">
+        <animate attributeName="r" values="25;27;25" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="65" r="30" fill="#4CAF50" opacity="0.1">
+        <animate attributeName="r" values="30;32;30" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Logo esasy -->
+    <g transform="translate(20, 10)">
+        <!-- Kitap şekili -->
+        <path d="M40 15 
+                 C40 15, 55 15, 70 15
+                 L70 65 
+                 C70 65, 55 65, 40 65
+                 C32 65, 25 62, 25 55
+                 L25 25
+                 C25 18, 32 15, 40 15Z"
+              fill="url(#bookGradient)"
+              filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.2))">
+            <animate attributeName="d"
+                     values="M40 15 C40 15, 55 15, 70 15 L70 65 C70 65, 55 65, 40 65 C32 65, 25 62, 25 55 L25 25 C25 18, 32 15, 40 15Z;
+                             M40 12 C40 12, 55 12, 70 12 L70 68 C70 68, 55 68, 40 68 C32 68, 25 65, 25 58 L25 22 C25 15, 32 12, 40 12Z;
+                             M40 15 C40 15, 55 15, 70 15 L70 65 C70 65, 55 65, 40 65 C32 65, 25 62, 25 55 L25 25 C25 18, 32 15, 40 15Z"
+                     dur="3s"
+                     repeatCount="indefinite"/>
+        </path>
+        
+        <!-- Sahypalar -->
+        <g>
+            <path d="M40 25 L65 25" stroke="white" stroke-width="3" opacity="0.9">
+                <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite"/>
+            </path>
+            <path d="M40 35 L65 35" stroke="white" stroke-width="3" opacity="0.9">
+                <animate attributeName="opacity" values="0.5;0.9;0.5" dur="3s" repeatCount="indefinite"/>
+            </path>
+            <path d="M40 45 L65 45" stroke="white" stroke-width="3" opacity="0.9">
+                <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite"/>
+            </path>
+        </g>
+
+        <!-- Galam -->
+        <g transform="translate(85, 15) rotate(-45)" filter="drop-shadow(1px 1px 2px rgba(0,0,0,0.2))">
+            <rect width="30" height="8" fill="url(#pencilGradient)" rx="1"/>
+            <path d="M30 0 L38 4 L30 8 Z" fill="#FF8F00"/>
+            <rect x="2" y="2" width="4" height="4" fill="white" opacity="0.7">
+                <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+            </rect>
+        </g>
+        
+        <!-- Test elementy -->
+        <circle cx="110" cy="40" r="22" fill="url(#circleGradient)" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.2))">
+            <animate attributeName="r" values="22;23;22" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Dogry nyşany -->
+        <use href="#checkPath" transform="translate(30, 0)"/>
+    </g>
+    
+    <!-- Kiçi dekoratiw elementler -->
+    <g>
+        <circle cx="15" cy="20" r="3" fill="#1E88E5" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="145" cy="60" r="4" fill="#43A047" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="135" cy="15" r="3" fill="#FFB300" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.7;0.4" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+    </g>
+</svg>

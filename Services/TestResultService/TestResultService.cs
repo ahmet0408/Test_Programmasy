@@ -44,6 +44,7 @@ namespace TestProgrammasy.Services.TestResultService
                     UserId = tr.UserId,
                     Score = tr.Score,
                     StudentName = tr.User.FirstName + " " + tr.User.LastName,
+                    StudentClass = tr.User.Class,
                     Description = tr.Description,
                     TotalPoints = tr.TotalPoints,
                     Percentage = tr.Percentage,
@@ -63,7 +64,7 @@ namespace TestProgrammasy.Services.TestResultService
         public async Task<List<TestResultDTO>> GetStudentTestResultsAsync(string studentId)
         {
             return await _dbContext.TestResults
-                .Where(tr => tr.UserId == studentId)
+                .Where(tr => tr.UserId == studentId).Include(tr => tr.User)
                 .OrderByDescending(tr => tr.CompletedAt)
                 .Select(tr => new TestResultDTO
                 {
@@ -71,7 +72,9 @@ namespace TestProgrammasy.Services.TestResultService
                     TestId = tr.TestId,
                     Name = tr.Name,
                     UserId = tr.UserId,
-                    Score = tr.Score,                    
+                    Score = tr.Score,
+                    StudentName = tr.User.FirstName + " " + tr.User.LastName,
+                    StudentClass = tr.User.Class,
                     Description = tr.Description,
                     TotalPoints = tr.TotalPoints,
                     Percentage = tr.Percentage,

@@ -9,7 +9,7 @@ namespace TestProgrammasy.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public int StudentClass { get; set; }
+        public int? StudentClass { get; set; }
         public int TimeSpent { get; set; }
         public DateTime StartDate { get; set; }
         public string UserId { get; set; }

@@ -5,12 +5,11 @@
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card" style="margin-top: 70px">
+        <div class="card">
             <div class="card-body">
-                <h2 class="card-title text-center mb-4">Ulgama Giriş</h2>
+                <h2 class="card-title text-center">Ulgama Giriş</h2>
 
                 <form method="post" asp-action="Login" asp-controller="Account">
-                    <div asp-validation-summary="All" class="text-danger"></div>
 
                     <div class="form-group">
                         <label asp-for="UserName">Ulanyjy adyňyz</label>
@@ -51,6 +50,29 @@
 
 <style>
     /* Login sahypasy üçin */
+        /* Kartyň merkezde durmagy üçin */
+        .row.justify-content-center {
+            min-height: 100vh;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Kartyň ýokarky boşlugy aýrylýar sebäbi row-da center edilen */
+        .card {
+            margin-top: 0 !important;
+        }
+
+        /* Giriş düwmesi üçin reňk */
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #357abd;
+                border-color: #357abd;
+            }
     .login-card {
         max-width: 450px;
         margin: auto;

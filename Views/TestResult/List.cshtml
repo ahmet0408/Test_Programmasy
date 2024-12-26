@@ -4,8 +4,7 @@
                   User.IsInRole("Teacher") ? "Teacher" : "Student";
 }
 
-<div class="container mt-4">
-    <div class="card">
+    <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Test Netijeleri</h3>
             @if (userRole != "Student")
@@ -16,6 +15,21 @@
             }
         </div>
         <div class="card-body">
+            @if (userRole != "Student")
+            {
+                <div class="mb-4">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Okuwçynyň ady boýunça gözleg...">
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="table-responsive">
                 <table class="table table-striped" id="resultsTable">
                     <thead>
@@ -25,8 +39,8 @@
                             {
                                 <th>Okuwçy</th>
                             }
+                            <th>Synpy</th>
                             <th>Ball</th>
-                            <th>Göterim</th>
                             <th>Baha</th>
                             <th>Sene</th>
                             <th>Amallar</th>
@@ -41,8 +55,8 @@
                                 {
                                     <td>@result.StudentName</td>
                                 }
+                                <td>@result.StudentClass</td>
                                 <td>@result.Score / @result.TotalPoints</td>
-                                <td>@result.Percentage%</td>
                                 <td>@result.Grade</td>
                                 <td>@result.CompletedAt.ToShortDateString()</td>
                                 <td>
@@ -68,15 +82,52 @@
             </div>
         </div>
     </div>
-</div>
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/dataTables.bootstrap4.min.css">
 
+}
 @section Scripts {
+    <script type="text/javascript" src="~/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/js/dataTables.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#resultsTable').DataTable({
                 "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"
+                     "url": "/js/tk.json"
+                  },
+                "pageLength": 20,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Hemmesi"]],
+                "order": [[5, "desc"]], // Sene boýunça tertipleşdirmek
+                "columnDefs": [
+                    { "orderable": false, "targets": -1 } // Amallar sütünini tertipleşdirmek däl
+                ],
+                initComplete: function () {
+                    // Her sütün üçin filter goşmak
+                    this.api().columns().every(function () {
+                        var column = this;
+                        if (column.index() != @(userRole != "Student" ? "6" : "5")) { // Amallar sütüninden başga
+                            var select = $('<select class="form-control form-control-sm"><option value=""></option></select>')
+                                .appendTo($(column.header()))
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+                                    column
+                                        .search(val ? '^' + val + '$' : '', true, false)
+                                        .draw();
+                                });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        }
+                    });
                 }
+            });
+
+            // Gözleg inputy üçin handler
+            $('#searchInput').on('keyup', function() {
+                $('#resultsTable').DataTable().search($(this).val()).draw();
             });
         });
     </script>
