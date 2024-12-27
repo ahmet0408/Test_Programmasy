@@ -1,4 +1,7 @@
 ﻿@model TestProgrammasy.DTOs.TestAnalyticsViewModel 
+@{
+    ViewData["Title"] = "Test Hasabaty";
+}
 
     <div class="row mt-4">
         <div class="col-md-6">
@@ -24,7 +27,7 @@
     </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/chart.js"></script>
     <script>
         const gradesData = @Json.Serialize(Model.GradesDistribution);
         const subjectsData = @Json.Serialize(Model.SubjectsPerformance);

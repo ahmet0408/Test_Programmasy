@@ -12,13 +12,34 @@
         }
     </div>
 
+    <!-- Modal HTML strukturasyny täzeläliň -->
     <div id="confirmationModal" class="modal">
         <div class="modal-content">
-            <h3>Tassyklama</h3>
-            <p>Bu testi başlamak isleýärsiňizmi? Wagtyňyz başlanda yzyna dolanyp bolmaýar.</p>
+            <div class="modal-header">
+                <h3>Testi Başlatmak</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <p>Bu testi başlamak isleýärsiňizmi?</p>
+                <ul class="test-info">
+                    <li><i class="fas fa-clock"></i> Wagt çägi: @Model.TimeLimit minut</li>
+                    <li><i class="fas fa-list"></i> Sorag sany: @Model.Questions.Count</li>
+                </ul>
+                <div class="modal-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Üns beriň: Test başlananda siziň başlan wagtyňyz hökmany hasaba alynýandyr.</p>
+                </div>
+            </div>
             <div class="modal-buttons">
-                <button id="confirmStart" class="btn btn-primary">Hawa</button>
-                <button id="cancelStart" class="btn btn-secondary">Ýok</button>
+                <button id="cancelStart" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Ýok
+                </button>
+                <button id="confirmStart" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Başla
+                </button>
             </div>
         </div>
     </div>
@@ -38,7 +59,7 @@
         </div>
     </div>
 </div>
-
+@section Styles {
     <style>
         .test-container {
             max-width: 800px;
@@ -100,6 +121,7 @@
             margin-top: 20px;
         }
 
+        /* Modal täze stilleri */
         .modal {
             display: none;
             position: fixed;
@@ -107,25 +129,160 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 0;
+            border-radius: 12px;
             width: 90%;
             max-width: 500px;
-            margin: 15% auto;
+            margin: 10% auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .modal-header h3 {
+                margin: 0;
+                color: #2c3e50;
+                font-size: 1.5rem;
+            }
+
+        .close-modal {
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .close-modal:hover {
+                color: #333;
+            }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .modal-icon i {
+                font-size: 48px;
+                color: #3498db;
+            }
+
+        .test-info {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+            .test-info li {
+                padding: 10px 0;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .modal-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .modal-warning i {
+                color: #ffc107;
+            }
+
+        .modal-buttons {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+            .btn i {
+                font-size: 16px;
+            }
+
+        /* Animasiýalar */
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+
+        }
+
+        @@keyframes slideIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Mobil üçin responsive dizaýn */
+        @@media (max-width: 768px) {
+            .modal-content
+
+        {
+            width: 95%;
+            margin: 5% auto;
         }
 
         .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+            flex-direction: column-reverse;
         }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        }
+
 
         .progress-info {
             text-align: center;
@@ -188,7 +345,7 @@
         cursor: not-allowed;
     }
     </style>
-
+}
 
 @section Scripts {
     <script>
@@ -208,7 +365,53 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('confirmationModal').style.display = 'block';
+                    const modal = document.getElementById('confirmationModal');
+        const closeBtn = document.querySelector('.close-modal');
+        const confirmStartBtn = document.getElementById('confirmStart');
+        const cancelStartBtn = document.getElementById('cancelStart');
+
+        // Modal ýapmak üçin funksiýa
+        function closeModal() {
+            modal.style.animation = 'fadeIn 0.3s ease-in-out reverse';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.style.animation = '';
+            }, 300);
+        }
+
+        // ESC düwmesi bilen ýapmak
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                window.location.href = '/Test';
+            }
+        });
+
+        // Ýapmak düwmesi
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                window.location.href = '/Test';
+            });
+        }
+
+        // "Başla" düwmesi basynanda
+        confirmStartBtn.addEventListener('click', function() {
+            closeModal();
+            document.getElementById('testContent').style.display = 'block';
+            const timerElement = document.getElementById('timer');
+            if (timerElement) {
+                const timeLimit = parseInt(timerElement.dataset.time) * 60;
+                startTimer(timeLimit);
+            }
+            loadQuestion(currentQuestionIndex);
+        });
+
+        // "Ýok" düwmesi basynanda
+        cancelStartBtn.addEventListener('click', function() {
+            window.location.href = '/Test';
+        });
+
+        // Modal açmak
+        modal.style.display = 'block';
 
             
 

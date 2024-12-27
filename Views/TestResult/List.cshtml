@@ -2,6 +2,7 @@
 @{
     var userRole = User.IsInRole("Admin") ? "Admin" :
                   User.IsInRole("Teacher") ? "Teacher" : "Student";
+    ViewData["Title"] = "Test Netijeleri";
 }
 
     <div class="card mt-4">
@@ -38,8 +39,8 @@
                             @if (userRole != "Student")
                             {
                                 <th>Okuwçy</th>
+                                <th>Synpy</th>
                             }
-                            <th>Synpy</th>
                             <th>Ball</th>
                             <th>Baha</th>
                             <th>Sene</th>
@@ -54,8 +55,8 @@
                                 @if (userRole != "Student")
                                 {
                                     <td>@result.StudentName</td>
+                                    <td>@result.StudentClass</td>
                                 }
-                                <td>@result.StudentClass</td>
                                 <td>@result.Score / @result.TotalPoints</td>
                                 <td>@result.Grade</td>
                                 <td>@result.CompletedAt.ToShortDateString()</td>
