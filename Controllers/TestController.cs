@@ -12,7 +12,6 @@ using TestProgrammasy.Services.UserService;
 
 namespace TestProgrammasy.Controllers
 {
-    [Authorize]
     public class TestController : Controller
     {
         private readonly ITestService _testService;
@@ -39,11 +38,12 @@ namespace TestProgrammasy.Controllers
             }
             return View("Index", test);
         }
+        [Authorize(Roles ="Admin,Teacher")]
         public IActionResult Create()
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateTestDTO createTestDTO)
         {
@@ -60,6 +60,8 @@ namespace TestProgrammasy.Controllers
             }
             return View(createTestDTO);
         }
+
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> Edit(int id)
         {
             var test = await _testService.GetTestForEditById(id);
@@ -72,6 +74,7 @@ namespace TestProgrammasy.Controllers
             return View(test);
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
         public async Task<IActionResult> Edit(EditTestDTO editTestDTO)
         {
@@ -89,6 +92,7 @@ namespace TestProgrammasy.Controllers
             return View(editTestDTO);
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -116,6 +120,7 @@ namespace TestProgrammasy.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Preview(int id)
         {
             var test = await _testService.GetTestForPreviewById(id);
@@ -128,6 +133,7 @@ namespace TestProgrammasy.Controllers
             return View(test);
         }
 
+        [Authorize]
         public async Task<IActionResult> StartTest(int id)
         {
             var test = await _testService.GetTestForPreviewById(id);
@@ -152,6 +158,7 @@ namespace TestProgrammasy.Controllers
             return View(test);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult SaveAnswer([FromBody] SaveAnswerRequestDTO request)
         {
@@ -166,6 +173,7 @@ namespace TestProgrammasy.Controllers
             return Json(new { success = true });
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CompleteTest([FromBody] int remainingTime)
         {

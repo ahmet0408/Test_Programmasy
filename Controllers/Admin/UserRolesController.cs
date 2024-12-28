@@ -98,5 +98,23 @@ namespace TestProgrammasy.Controllers.Admin
         {
             return new List<string>(await _userManager.GetRolesAsync(user));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"User with ID = {userId} not found.");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return BadRequest("Error occurred while deleting the user.");
+        }
     }
 }
