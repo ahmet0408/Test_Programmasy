@@ -9,7 +9,6 @@ using TestProgrammasy.Services.UserService;
 
 namespace TestProgrammasy.Controllers
 {
-    [Authorize]
     public class TestResultController : Controller
     {
         private readonly ITestResultService _testResultService;
@@ -25,7 +24,7 @@ namespace TestProgrammasy.Controllers
             _userService = userService;
             _pdfService = pdfService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index(int id)
         {
             var userRole = await _userService.GetUserRole(User.Identity.Name);
@@ -41,6 +40,7 @@ namespace TestProgrammasy.Controllers
             return View(result);
         }
 
+        [Authorize]
         public async Task<IActionResult> List()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -63,6 +63,7 @@ namespace TestProgrammasy.Controllers
             return View(results);
         }
 
+        [Authorize(Roles="Admin,Teacher")]
         [HttpGet]
         public async Task<IActionResult> ExportPdf(int id)
         {
@@ -73,6 +74,7 @@ namespace TestProgrammasy.Controllers
             return File(pdf, "application/pdf", $"{result.StudentName}.pdf");
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Analytics()
         {

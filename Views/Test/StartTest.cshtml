@@ -356,13 +356,11 @@
         };
 
         let currentQuestionIndex = 0;
-        let questions = @Html.Raw(Json.Serialize(Model.Questions));
+        let questions = @Html.Raw(Json.Serialize(Model.Questions));        
         let answers = {};
         let timerInterval;
         let remainingTime = 0; // Add this as a global variable
         let skippedQuestions = []; // Add this new array
-
-
 
         document.addEventListener('DOMContentLoaded', function() {
                     const modal = document.getElementById('confirmationModal');
@@ -382,14 +380,14 @@
         // ESC düwmesi bilen ýapmak
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && modal.style.display === 'block') {
-                window.location.href = '/Test';
+                window.location.href = '/Test/Preview/@Model.Id';
             }
         });
 
         // Ýapmak düwmesi
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
-                window.location.href = '/Test';
+                    window.location.href = '/Test/Preview/@Model.Id';
             });
         }
 
@@ -407,7 +405,7 @@
 
         // "Ýok" düwmesi basynanda
         cancelStartBtn.addEventListener('click', function() {
-            window.location.href = '/Test';
+                window.location.href = '/Test/Preview/@Model.Id';
         });
 
         // Modal açmak
@@ -428,7 +426,7 @@
             });
 
             document.getElementById('cancelStart').addEventListener('click', function() {
-                window.location.href = '/Test';
+                window.location.href = '/Test/Preview/@Model.Id';
             });
 
             document.getElementById('nextQuestion').addEventListener('click', handleNextQuestion);

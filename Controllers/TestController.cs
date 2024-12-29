@@ -22,13 +22,13 @@ namespace TestProgrammasy.Controllers
             _testService = testService;
             _userService = userService;
         }
-
+        [Authorize(Roles = "Admin,Student")]
         public IActionResult Index()
         {
             var tests = _testService.GetTestList();
             return View(tests);
         }
-
+        [Authorize(Roles = "Teacher")]
         public IActionResult TestByUser(string userId)
         {
             var test = _testService.GetTestListByUserId(userId);

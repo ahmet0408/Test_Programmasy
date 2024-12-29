@@ -1,7 +1,13 @@
-﻿@using TestProgrammasy.DTOs
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@using TestProgrammasy.DTOs
 @model TestProgrammasy.DTOs.TestResultDTO
 @{
     ViewData["Title"] = "Test Netijesi";
+    var user = await UserManager.GetUserAsync(User);
+
+    var isAdmin = User.IsInRole("Admin");
+    var isTeacher = User.IsInRole("Teacher");
 }
 
     <div class="card mt-4">
@@ -11,9 +17,12 @@
                 <a href="@Url.Action("List")" class="btn btn-light">
                     <i class="bi bi-arrow-left"></i> Yza
                 </a>
+                      @if (isAdmin || isTeacher)
+                    {
                 <a href="@Url.Action("ExportPdf", new { id = Model.Id })" class="btn btn-light">
                     <i class="bi bi-file-pdf"></i> PDF Export
                 </a>
+                }
             </div>
         </div>
 
