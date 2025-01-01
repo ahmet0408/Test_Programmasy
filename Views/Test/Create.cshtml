@@ -179,14 +179,17 @@
                                     <input name="Questions[${questionCount}].Answers[0].AnswerText"
                                            class="form-control"
                                            placeholder="Jogap warianty" />
+                                    <input type="hidden"
+                                           name="Questions[${questionCount}].Answers[0].Order"
+                                           value="0" />
                                 </div>
                                 <button type="button"
-                                                class="btn btn-danger btn-sm ml-2"
-                                                onclick="removeAnswer(this)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                                            </svg
-                                        </button>
+                                        class="btn btn-danger btn-sm ml-2"
+                                        onclick="removeAnswer(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
@@ -224,13 +227,16 @@
                         <input name="Questions[${questionIndex}].Answers[${answerCount}].AnswerText"
                                class="form-control"
                                placeholder="Jogap warianty" />
+                        <input type="hidden"
+                               name="Questions[${questionIndex}].Answers[${answerCount}].Order"
+                               value="${answerCount}" />
                     </div>
                     <button type="button"
                             class="btn btn-danger btn-sm ml-2"
                             onclick="removeAnswer(this)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                                            </svg
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                        </svg>
                     </button>
                 </div>`;
 
@@ -241,6 +247,7 @@
             if (confirm('Sораgy pozmak isleýärsiňizmi?')) {
                 button.closest('.question-block').remove();
                 updateQuestionNumbers();
+                updateAllQuestionsIndexes();
             }
         }
 
@@ -256,14 +263,52 @@
         function updateQuestionNumbers() {
             document.querySelectorAll('.question-block').forEach((block, index) => {
                 block.querySelector('label').textContent = `Sorag №${index + 1}`;
+                updateQuestionIndexInNames(block, index);
+            });
+        }
+
+        function updateQuestionIndexInNames(questionBlock, newIndex) {
+            // Update question text name
+            const questionText = questionBlock.querySelector('textarea[name*="Questions"]');
+            questionText.name = `Questions[${newIndex}].QuestionText`;
+
+            // Update correct answer index name
+            const radioButtons = questionBlock.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.name = `Questions[${newIndex}].CorrectAnswerIndex`;
+            });
+
+            // Update answer text and order names
+            const answers = questionBlock.querySelectorAll('.answer-row');
+            answers.forEach((answer, answerIndex) => {
+                const answerText = answer.querySelector('input[name*="AnswerText"]');
+                const orderInput = answer.querySelector('input[name*="Order"]');
+
+                answerText.name = `Questions[${newIndex}].Answers[${answerIndex}].AnswerText`;
+                orderInput.name = `Questions[${newIndex}].Answers[${answerIndex}].Order`;
+                orderInput.value = answerIndex;
             });
         }
 
         function updateAnswerIndexes(questionBlock) {
+            const questionIndex = Array.from(document.querySelectorAll('.question-block')).indexOf(questionBlock);
             const answers = questionBlock.querySelectorAll('.answer-row');
+
             answers.forEach((answer, index) => {
                 const radio = answer.querySelector('input[type="radio"]');
+                const answerText = answer.querySelector('input[name*="AnswerText"]');
+                const orderInput = answer.querySelector('input[name*="Order"]');
+
                 radio.value = index;
+                answerText.name = `Questions[${questionIndex}].Answers[${index}].AnswerText`;
+                orderInput.name = `Questions[${questionIndex}].Answers[${index}].Order`;
+                orderInput.value = index;
+            });
+        }
+
+        function updateAllQuestionsIndexes() {
+            document.querySelectorAll('.question-block').forEach((block, index) => {
+                updateQuestionIndexInNames(block, index);
             });
         }
 
@@ -336,29 +381,48 @@
         }
 
         function addQuestionWithAnswers(questionText, answers, correctAnswerIndex) {
-            // First add the question
             addQuestion();
 
             const questionBlocks = document.querySelectorAll('.question-block');
             const lastQuestion = questionBlocks[questionBlocks.length - 1];
+            const questionIndex = questionBlocks.length - 1;
 
             // Set question text
             lastQuestion.querySelector('textarea[name$="].QuestionText"]').value = questionText;
 
+            // Remove default answer row
+            const answersContainer = lastQuestion.querySelector('.answers-container');
+            answersContainer.innerHTML = '';
+
             // Add answers
             answers.forEach((answer, index) => {
-                if (index > 0) {
-                    // First answer already exists, add new ones
-                    addAnswer(questionBlocks.length - 1);
-                }
-
-                const answerInput = lastQuestion.querySelector(`input[name$="].Answers[${index}].AnswerText"]`);
-                const radioInput = lastQuestion.querySelector(`input[type="radio"][value="${index}"]`);
-
-                answerInput.value = answer;
-                if (index === correctAnswerIndex) {
-                    radioInput.checked = true;
-                }
+                const answerHtml = `
+                    <div class="answer-row d-flex align-items-center mb-2">
+                        <div class="form-check mr-2 d-flex align-items-center">
+                            <input type="radio"
+                                   name="Questions[${questionIndex}].CorrectAnswerIndex"
+                                   value="${index}"
+                                   ${index === correctAnswerIndex ? 'checked' : ''}
+                                   class="form-check-input" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <input name="Questions[${questionIndex}].Answers[${index}].AnswerText"
+                                   class="form-control"
+                                   placeholder="Jogap warianty"
+                                   value="${answer}" />
+                            <input type="hidden"
+                                   name="Questions[${questionIndex}].Answers[${index}].Order"
+                                   value="${index}" />
+                        </div>
+                        <button type="button"
+                                class="btn btn-danger btn-sm ml-2"
+                                onclick="removeAnswer(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                            </svg>
+                        </button>
+                    </div>`;
+                answersContainer.insertAdjacentHTML('beforeend', answerHtml);
             });
         }
 

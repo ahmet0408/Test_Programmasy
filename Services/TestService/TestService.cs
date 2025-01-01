@@ -76,7 +76,7 @@ namespace TestProgrammasy.Services.TestService
 
         public async Task<EditTestDTO> GetTestForEditById(int id)
         {
-            Test test = await _dbContext.Tests.Include(p => p.Questions).ThenInclude(p => p.Answers).FirstOrDefaultAsync(p => p.Id == id);
+            Test test = await _dbContext.Tests.Include(p => p.Questions).ThenInclude(p => p.Answers.OrderBy(p => p.Order)).FirstOrDefaultAsync(p => p.Id == id);
             var result = _mapper.Map<EditTestDTO>(test);
             return result;
         }
