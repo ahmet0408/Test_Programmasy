@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Home\About.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Home\About.cshtml" />
     <_ContentIncludedByDefault Remove="wwwroot\css\custom.css" />
   </ItemGroup>
 
@@ -45,11 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Home\About.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Home\About.cshtml" />
     <None Include="wwwroot\webfonts\fa-brands-400.woff2" />
     <None Include="wwwroot\webfonts\fa-regular-400.woff2" />
     <None Include="wwwroot\webfonts\fa-solid-900.woff2" />
